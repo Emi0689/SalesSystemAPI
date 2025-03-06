@@ -37,7 +37,7 @@ namespace SalesSystem.API.Controllers
 
         [HttpGet]
         [Route("History")]
-        public async Task<IActionResult> History(string searchFor, string saleNumber, string startDate, string endDate)
+        public async Task<IActionResult> History(string searchFor, string? saleNumber, string? startDate, string? endDate)
         {
             var rsp = new Response<List<SaleDTO>>();
             try

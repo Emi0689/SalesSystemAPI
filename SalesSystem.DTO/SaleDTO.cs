@@ -12,7 +12,5 @@
 
         public string? Timestamp { get; set; }
 
-        public virtual ICollection<SaleDetailDTO>? SaleDetail { get; set; }
-
     }
 }

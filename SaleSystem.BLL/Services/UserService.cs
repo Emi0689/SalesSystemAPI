@@ -81,18 +81,19 @@ namespace SalesSystem.BLL.Services
                 var userFound = await _userRepository.Get(u => u.IdUser == userDTO.IdUser);
                 if (userFound.IdUser == 0)
                 {
-                    throw new TaskCanceledException("The user does not exist");
+                    throw new TaskCanceledException("The user does not exist.");
                 }
                 userFound.FullName = user.FullName;
                 userFound.Email = user.Email;
                 userFound.IdRol = user.IdRol;
                 userFound.IsActive = user.IsActive;
+                userFound.Password = user.Password;
 
                 bool result = await _userRepository.Update(userFound);
 
-                if (result)
+                if (!result)
                 {
-                    throw new TaskCanceledException("The user could not be updated");
+                    throw new TaskCanceledException("The user could not be updated.");
                 }
                 return result;
             }

@@ -1,6 +1,5 @@
 ﻿
 using SalesSystem.Model.Entities;
-using SalesSystem.DAL.DBContext;
 
 namespace SalesSystem.DAL.Repositories.Interfaces
 {

@@ -59,8 +59,11 @@ namespace SalesSystem.DAL.Repositories
             try
             {
                 _dbContext.Set<TModel>().Update(model);
-                await _dbContext.SaveChangesAsync();
-                return true;
+                var result = await _dbContext.SaveChangesAsync();
+                if (result > 0)
+                    return true;
+                else 
+                    return false;
             }
             catch
             {

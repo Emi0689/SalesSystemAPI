@@ -23,6 +23,7 @@ namespace SalesSystem.IOC
 
             services.AddScoped<IRolService, RolService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ISaleService, SaleService>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IProductService, ProductService>();

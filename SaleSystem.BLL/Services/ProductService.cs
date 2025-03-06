@@ -70,7 +70,7 @@ namespace SalesSystem.BLL.Services
 
                 bool result = await _productRepository.Update(productFound);
 
-                if (result)
+                if (!result)
                 {
                     throw new TaskCanceledException("The product could not be updated");
                 }
