@@ -39,6 +39,7 @@ namespace SalesSystem.BLL.Services
                         Total = item.Value,
                     });
                 }
+                vmDashboard.weekSaleDTOs = weekSaleDTOs;
                 return vmDashboard;
             }
             catch (Exception)
@@ -98,9 +99,10 @@ namespace SalesSystem.BLL.Services
 
             if (_querySale.Count() > 0)
             {
-                var saleTable = SalesReturn(_querySale, 7);
+                var saleTable = SalesReturn(_querySale, -7);
                 result = saleTable.GroupBy(s => s.Timestamp.Value.Date).OrderBy(x => x.Key)
-                    .Select(s => new { date = s.Key.ToString("MM/dd/yyyy"), total = s.Count() }).ToDictionary(keySelector: d => d.date, elementSelector: d => d.total);
+                    .Select(s => new { date = s.Key.ToString("MM/dd/yyyy"), total = s.Count() })
+                    .ToDictionary(keySelector: d => d.date, elementSelector: d => d.total);
 
             }
 

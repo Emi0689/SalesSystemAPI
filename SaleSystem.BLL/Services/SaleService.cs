@@ -63,7 +63,7 @@ namespace SalesSystem.BLL.Services
                 else
                 {
                     sales = await query.Where(filter =>
-                                            filter.Idnumber == saleNumber)
+                                            filter.IdNumber == saleNumber)
                             .Include(sd => sd.SaleDetails)
                             .ThenInclude(p => p.IdProductNavigation)
                             .ToListAsync();
@@ -88,10 +88,10 @@ namespace SalesSystem.BLL.Services
                 DateTime end_Date = DateTime.ParseExact(endDate, "MM/dd/yyyy", new CultureInfo("en-US"));
 
                 salesDetail = await query
-                          //.Include(sd => sd.IdProductNavigation)
-                          //.Include(p => p.IdSaleNavigation)
-                          //.Where(sd => sd.IdSaleNavigation.Timestamp.Value.Date >= start_Date
-                          //             && sd.IdSaleNavigation.Timestamp.Value.Date <= end_Date)
+                          .Include(sd => sd.IdProductNavigation)
+                          .Include(p => p.IdSaleNavigation)
+                          .Where(t => t.IdSaleNavigation.Timestamp >= start_Date
+                                       && t.IdSaleNavigation.Timestamp <= end_Date)
                           .ToListAsync();
 
                 return _mapper.Map<List<ReportDTO>>(salesDetail);

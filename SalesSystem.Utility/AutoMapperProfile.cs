@@ -127,7 +127,7 @@ namespace SalesSystem.Utility
                 )
                 .ForMember(
                     dest => dest.IdNumber,
-                    opt => opt.MapFrom(src => src.IdSaleNavigation.Idnumber)
+                    opt => opt.MapFrom(src => src.IdSaleNavigation.IdNumber)
                 ).ForMember(
                     dest => dest.PaymentType,
                     opt => opt.MapFrom(src => src.IdSaleNavigation.PaymentType)

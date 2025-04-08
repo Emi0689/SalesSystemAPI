@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace SalesSystem.Model.Entities;
 
-public partial class Idnumber
+public partial class IdNumber
 {
-    public int IdIdnumber { get; set; }
+    public int IdIdNumber { get; set; }
 
     public int LastNumber { get; set; }
 

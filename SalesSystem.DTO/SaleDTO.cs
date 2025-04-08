@@ -4,7 +4,7 @@
     {
         public int IdSale { get; set; }
 
-        public string? Idnumber { get; set; }
+        public string? IdNumber { get; set; }
 
         public string? PaymentType { get; set; }
 

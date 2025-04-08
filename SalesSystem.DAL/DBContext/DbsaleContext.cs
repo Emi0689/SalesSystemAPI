@@ -20,7 +20,7 @@ public partial class DbsaleContext : DbContext
 
     public virtual DbSet<SaleDetails> SaleDetails { get; set; }
 
-    public virtual DbSet<Idnumber> Idnumbers { get; set; }
+    public virtual DbSet<IdNumber> Idnumbers { get; set; }
 
     public virtual DbSet<Menu> Menus { get; set; }
 
@@ -84,13 +84,13 @@ public partial class DbsaleContext : DbContext
                 .HasConstraintName("FK__DetalleSa__idSal__534D60F1");
         });
 
-        modelBuilder.Entity<Idnumber>(entity =>
+        modelBuilder.Entity<IdNumber>(entity =>
         {
-            entity.HasKey(e => e.IdIdnumber).HasName("PK__IDNumber__8106ADE5FCE24953");
+            entity.HasKey(e => e.IdIdNumber).HasName("PK__IDNumber__8106ADE5FCE24953");
 
             entity.ToTable("IDNumber");
 
-            entity.Property(e => e.IdIdnumber).HasColumnName("idIDNumber");
+            entity.Property(e => e.IdIdNumber).HasColumnName("idIDNumber");
             entity.Property(e => e.LastNumber).HasColumnName("last_Number");
             entity.Property(e => e.Timestamp)
                 .HasDefaultValueSql("(getdate())")
@@ -191,7 +191,7 @@ public partial class DbsaleContext : DbContext
             entity.ToTable("Sale");
 
             entity.Property(e => e.IdSale).HasColumnName("idSale");
-            entity.Property(e => e.Idnumber)
+            entity.Property(e => e.IdNumber)
                 .HasMaxLength(40)
                 .IsUnicode(false)
                 .HasColumnName("IDNumber");

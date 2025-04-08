@@ -33,7 +33,7 @@ namespace SalesSystem.DAL.Repositories
                     /////////////////////////////////////////////
 
                     ///////////new ID value/////////
-                    Idnumber idnumberNext = _dbsaleContext.Idnumbers.First();
+                    IdNumber idnumberNext = _dbsaleContext.Idnumbers.First();
                     idnumberNext.LastNumber = idnumberNext.LastNumber + 1;
                     idnumberNext.Timestamp = DateTime.Now;
                     await _dbsaleContext.SaveChangesAsync();
@@ -46,7 +46,7 @@ namespace SalesSystem.DAL.Repositories
 
                     iDSaleNumber = iDSaleNumber.Substring(iDSaleNumber.Length - numberOfDigits, numberOfDigits);
 
-                    sale.Idnumber = iDSaleNumber;
+                    sale.IdNumber = iDSaleNumber;
 
                     await _dbsaleContext.AddAsync(sale);
                     await _dbsaleContext.SaveChangesAsync();
