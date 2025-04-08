@@ -10,11 +10,11 @@ namespace SalesSystem.BLL.Services
 {
     public class SaleService: ISaleService
     {
-        private readonly IGenericRepository<SaleDetail> _saleDetailRepository;
+        private readonly IGenericRepository<SaleDetails> _saleDetailRepository;
         private readonly ISaleRepository _saleRepository;
         private readonly IMapper _mapper;
 
-        public SaleService(IGenericRepository<SaleDetail> saleDetailRepositoryaleRepository,
+        public SaleService(IGenericRepository<SaleDetails> saleDetailRepositoryaleRepository,
                            ISaleRepository saleRepository,
                            IMapper mapper)
         {
@@ -30,7 +30,7 @@ namespace SalesSystem.BLL.Services
                 var saleCreated = await _saleRepository.Create(_mapper.Map<Sale>(SaleDTO));
                 if(saleCreated.IdSale == 0)
                 {
-                    throw new TaskCanceledException("The Sale could not be created");
+                    throw new TaskCanceledException("The Sale could not be created.");
                 }
                 return _mapper.Map<SaleDTO>(saleCreated);
             }
@@ -79,8 +79,8 @@ namespace SalesSystem.BLL.Services
 
         public async Task<List<ReportDTO>> Report(string startDate, string endDate)
         {
-            IQueryable<SaleDetail> query = await _saleDetailRepository.GetAll();
-            var salesDetail = new List<SaleDetail>();
+            IQueryable<SaleDetails> query = await _saleDetailRepository.GetAll();
+            var salesDetail = new List<SaleDetails>();
 
             try
             {
@@ -88,10 +88,10 @@ namespace SalesSystem.BLL.Services
                 DateTime end_Date = DateTime.ParseExact(endDate, "MM/dd/yyyy", new CultureInfo("en-US"));
 
                 salesDetail = await query
-                          .Include(sd => sd.IdProductNavigation)
-                          .Include(p => p.IdSaleNavigation)
-                          .Where(sd => sd.IdSaleNavigation.Timestamp.Value.Date >= start_Date
-                                       && sd.IdSaleNavigation.Timestamp.Value.Date <= end_Date)
+                          //.Include(sd => sd.IdProductNavigation)
+                          //.Include(p => p.IdSaleNavigation)
+                          //.Where(sd => sd.IdSaleNavigation.Timestamp.Value.Date >= start_Date
+                          //             && sd.IdSaleNavigation.Timestamp.Value.Date <= end_Date)
                           .ToListAsync();
 
                 return _mapper.Map<List<ReportDTO>>(salesDetail);

@@ -72,7 +72,7 @@ namespace SalesSystem.API.Controllers
         }
 
         [HttpDelete]
-        [Route("Delete/{id:int}")]
+        [Route("Delete/{productId:int}")]
         public async Task<IActionResult> Delete(int productId)
         {
             var rsp = new Response<bool>();

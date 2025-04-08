@@ -39,7 +39,7 @@ namespace SalesSystem.BLL.Services
                 var userCreated = await _userRepository.Create(_mapper.Map<User>(userDTO));
                 if (userCreated.IdUser == 0)
                 {
-                    throw new TaskCanceledException("The user does not exist");
+                    throw new TaskCanceledException("The user does not exist.");
                 }
                 var query = await _userRepository.GetAll(u => u.IdUser == userCreated.IdUser);
                 userCreated = query.Include(rol => rol.IdRolNavigation).First();
@@ -61,9 +61,9 @@ namespace SalesSystem.BLL.Services
                     throw new TaskCanceledException("The user does not exist");
                 }
                 bool result = await _userRepository.Delete(userFound);
-                if (result)
+                if (!result)
                 {
-                    throw new TaskCanceledException("The user could not be deleted");
+                    throw new TaskCanceledException("The user could not be deleted.");
                 }
                 return result;
             }
@@ -111,7 +111,7 @@ namespace SalesSystem.BLL.Services
 
                 if (!userQuery.Any())
                 {
-                    throw new TaskCanceledException("The user does not exist");
+                    throw new TaskCanceledException("The user does not exist.");
                 }
                 User user = userQuery.Include(rol => rol.IdRolNavigation).First();
                 return _mapper.Map<SessionDTO>(user);

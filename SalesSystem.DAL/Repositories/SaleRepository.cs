@@ -13,7 +13,7 @@ namespace SalesSystem.DAL.Repositories
             _dbsaleContext = dbContext;
         }
 
-        async Task<Sale> Create(Sale sale)
+        public new async Task<Sale> Create(Sale sale)
         {
             Sale saleGenerated = new Sale();
 
@@ -23,7 +23,7 @@ namespace SalesSystem.DAL.Repositories
                 {
   
                     ///////////remove product from stock/////////
-                    foreach (SaleDetail sl in sale.SaleDetails)
+                    foreach (SaleDetails sl in sale.SaleDetails)
                     {
                         Product product_found = _dbsaleContext.Products.Where(p => p.IdProduct == sl.IdProduct).First();
                         product_found.Stock = product_found.Stock - sl.Amount;

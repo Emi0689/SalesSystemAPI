@@ -97,7 +97,7 @@ namespace SalesSystem.Utility
             #endregion
 
             #region Sale
-            CreateMap<SaleDetail, SaleDetailDTO>()
+            CreateMap<SaleDetails, SaleDetailsDTO>()
                .ForMember(
                     dest => dest.ProductDescription,
                     opt => opt.MapFrom(src => src.IdProductNavigation.Name)
@@ -109,7 +109,7 @@ namespace SalesSystem.Utility
                     opt => opt.MapFrom(src => Convert.ToString(src.Total.Value, new CultureInfo(cultureInfo)))
                 );
 
-            CreateMap<SaleDetailDTO, SaleDetail>()
+            CreateMap<SaleDetailsDTO, SaleDetails>()
                 .ForMember(
                     dest => dest.Price,
                     opt => opt.MapFrom(src => Convert.ToDecimal(src.PriceText, new CultureInfo(cultureInfo)))
@@ -120,7 +120,7 @@ namespace SalesSystem.Utility
             #endregion
 
             #region Report
-            CreateMap<SaleDetail, ReportDTO>()
+            CreateMap<SaleDetails, ReportDTO>()
                 .ForMember(
                     dest => dest.Timestamp,
                     opt => opt.MapFrom(src => src.IdSaleNavigation.Timestamp.Value.ToLocalTime().ToString("dd/MM/yyyy"))

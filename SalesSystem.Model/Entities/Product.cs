@@ -19,7 +19,7 @@ public partial class Product
 
     public DateTime? Timestamp { get; set; }
 
-    public virtual ICollection<SaleDetail> SaleDetails { get; set; } = new List<SaleDetail>();
+    public virtual ICollection<SaleDetails> SaleDetails { get; set; } = new List<SaleDetails>();
 
     public virtual Category? IdCategoryNavigation { get; set; }
 }

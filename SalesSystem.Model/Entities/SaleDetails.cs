@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace SalesSystem.Model.Entities;
 
-public partial class SaleDetail
+public partial class SaleDetails
 {
-    public int IdSaleDetail { get; set; }
+    public int IdSaleDetails { get; set; }
 
     public int? IdSale { get; set; }
 

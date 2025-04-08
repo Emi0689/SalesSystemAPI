@@ -40,7 +40,7 @@ namespace SalesSystem.BLL.Services
                 var productCreated = await _productRepository.Create(_mapper.Map<Product>(ProductDTO));
                 if (productCreated.IdProduct == 0)
                 {
-                    throw new TaskCanceledException("The product does not exist");
+                    throw new TaskCanceledException("The product does not exist.");
                 }
                 var query = await _productRepository.GetAll(u => u.IdProduct == productCreated.IdProduct);
                 productCreated = query.Include(rol => rol.IdCategoryNavigation).First();
@@ -60,7 +60,7 @@ namespace SalesSystem.BLL.Services
                 var productFound = await _productRepository.Get(u => u.IdProduct == ProductDTO.IdProduct);
                 if (productFound.IdProduct == 0)
                 {
-                    throw new TaskCanceledException("The Product does not exist");
+                    throw new TaskCanceledException("The Product does not exist.");
                 }
                 productFound.Price = product.Price;
                 productFound.Stock = product.Stock;
@@ -72,7 +72,7 @@ namespace SalesSystem.BLL.Services
 
                 if (!result)
                 {
-                    throw new TaskCanceledException("The product could not be updated");
+                    throw new TaskCanceledException("The product could not be updated.");
                 }
                 return result;
             }
@@ -89,12 +89,12 @@ namespace SalesSystem.BLL.Services
                 var productFound = await _productRepository.Get(u => u.IdProduct == id);
                 if (productFound.IdProduct == 0)
                 {
-                    throw new TaskCanceledException("The product does not exist");
+                    throw new TaskCanceledException("The product does not exist.");
                 }
                 bool result = await _productRepository.Delete(productFound);
-                if (result)
+                if (!result)
                 {
-                    throw new TaskCanceledException("The product could not be updated");
+                    throw new TaskCanceledException("The product could not be updated.");
                 }
                 return result;
             }

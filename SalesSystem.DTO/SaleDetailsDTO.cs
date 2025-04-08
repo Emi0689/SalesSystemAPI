@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SalesSystem.DTO
 {
-    public class SaleDetailDTO
+    public class SaleDetailsDTO
     {
         public int? IdProduct { get; set; }
 

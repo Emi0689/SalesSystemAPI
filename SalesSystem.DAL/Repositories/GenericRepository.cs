@@ -18,7 +18,7 @@ namespace SalesSystem.DAL.Repositories
         {
             try
             {
-                TModel model = await _dbContext.Set<TModel>().FirstOrDefaultAsync();
+                TModel model = filter == null ? await _dbContext.Set<TModel>().FirstOrDefaultAsync() : await _dbContext.Set<TModel>().Where(filter).FirstOrDefaultAsync();
                 return model;
             }
             catch

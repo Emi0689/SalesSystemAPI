@@ -18,7 +18,7 @@ public partial class DbsaleContext : DbContext
 
     public virtual DbSet<Category> Categories { get; set; }
 
-    public virtual DbSet<SaleDetail> SaleDetails { get; set; }
+    public virtual DbSet<SaleDetails> SaleDetails { get; set; }
 
     public virtual DbSet<Idnumber> Idnumbers { get; set; }
 
@@ -58,13 +58,13 @@ public partial class DbsaleContext : DbContext
                 .HasColumnName("timestamp");
         });
 
-        modelBuilder.Entity<SaleDetail>(entity =>
+        modelBuilder.Entity<SaleDetails>(entity =>
         {
-            entity.HasKey(e => e.IdSaleDetail).HasName("PK__DetalleS__99E08681B90C49CB");
+            entity.HasKey(e => e.IdSaleDetails).HasName("PK__DetalleS__99E08681B90C49CB");
 
-            entity.ToTable("SaleDetail");
+            entity.ToTable("SaleDetails");
 
-            entity.Property(e => e.IdSaleDetail).HasColumnName("idSaleDetail");
+            entity.Property(e => e.IdSaleDetails).HasColumnName("idSaleDetails");
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.IdProduct).HasColumnName("idProduct");
             entity.Property(e => e.IdSale).HasColumnName("idSale");

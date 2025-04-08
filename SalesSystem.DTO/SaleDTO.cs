@@ -11,6 +11,6 @@
         public string? TotalText { get; set; }
 
         public string? Timestamp { get; set; }
-
+        public virtual ICollection<SaleDetailsDTO> SaleDetails { get; set; } = new List<SaleDetailsDTO>();
     }
 }
