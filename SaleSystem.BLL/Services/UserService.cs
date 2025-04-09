@@ -4,6 +4,8 @@ using SalesSystem.BLL.Services.Interfaces;
 using SalesSystem.DAL.Repositories.Interfaces;
 using SalesSystem.DTO;
 using SalesSystem.Model.Entities;
+using SalesSystem.Utility;
+using System.Reflection.Metadata;
 
 namespace SalesSystem.BLL.Services
 {
@@ -56,6 +58,10 @@ namespace SalesSystem.BLL.Services
             try
             {
                 var userFound = await _userRepository.Get(u => u.IdUser == id);
+
+                if (userFound.IdRol != Constants.rolAdmin)
+                    throw new Exception("Nop!");
+
                 if (userFound.IdUser == 0)
                 {
                     throw new TaskCanceledException("The user does not exist");

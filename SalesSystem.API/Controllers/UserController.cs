@@ -2,6 +2,7 @@
 using SalesSystem.API.Utilities;
 using SalesSystem.DTO;
 using SalesSystem.BLL.Services.Interfaces;
+using SalesSystem.Utility;
 
 
 namespace SalesSystem.API.Controllers
@@ -61,6 +62,9 @@ namespace SalesSystem.API.Controllers
             var rsp = new Response<UserDTO>();
             try
             {
+                if (userDTO.IdRol != Constants.rolAdmin)
+                    throw new Exception("Nop!");
+
                 rsp.status = true;
                 rsp.value = await _userService.Create(userDTO);
             }
@@ -79,6 +83,9 @@ namespace SalesSystem.API.Controllers
             var rsp = new Response<bool>();
             try
             {
+                if (userDTO.IdRol != Constants.rolAdmin)
+                    throw new Exception("Nop!");
+
                 rsp.status = true;
                 rsp.value = await _userService.Update(userDTO);
             }
