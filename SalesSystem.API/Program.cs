@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Localization;
 using SalesSystem.IOC;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,22 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.DependencyInjections(builder.Configuration);
+
+///////CULTURE INFO////////
+var defaultCulture = new CultureInfo("en-US");
+CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
+CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
+
+// (Opcional for request HTTP)
+var supportedCultures = new[] { defaultCulture };
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture(defaultCulture);
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
+//////////////////
+
 
 builder.Services.AddCors(op => { op.AddPolicy("Policy", app => app.AllowAnyHeader().AllowAnyOrigin().AllowAnyOrigin().AllowAnyMethod()); });
 
