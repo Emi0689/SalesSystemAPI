@@ -85,7 +85,7 @@ namespace SalesSystem.Utility
                     opt => opt.MapFrom(src => Convert.ToDecimal(src.Total, new CultureInfo(cultureInfo)))
                 ).ForMember(
                     dest => dest.Timestamp,
-                    opt => opt.MapFrom(src => src.Timestamp.Value.ToLocalTime().ToString("dd/MM/yyyy"))
+                    opt => opt.MapFrom(src => src.Timestamp.Value.ToLocalTime().ToString("MM/dd/yyyy"))
                 );
 
             CreateMap<SaleDTO, Sale>()
@@ -123,7 +123,7 @@ namespace SalesSystem.Utility
             CreateMap<SaleDetails, ReportDTO>()
                 .ForMember(
                     dest => dest.Timestamp,
-                    opt => opt.MapFrom(src => src.IdSaleNavigation.Timestamp.Value.ToLocalTime().ToString("dd/MM/yyyy"))
+                    opt => opt.MapFrom(src => src.IdSaleNavigation.Timestamp.Value.ToLocalTime().ToString("MM/dd/yyyy"))
                 )
                 .ForMember(
                     dest => dest.IdNumber,

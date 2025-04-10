@@ -90,8 +90,8 @@ namespace SalesSystem.BLL.Services
                 salesDetail = await query
                           .Include(sd => sd.IdProductNavigation)
                           .Include(p => p.IdSaleNavigation)
-                          .Where(t => t.IdSaleNavigation.Timestamp >= start_Date
-                                       && t.IdSaleNavigation.Timestamp <= end_Date)
+                          .Where(t => t.IdSaleNavigation.Timestamp.Value.Date >= start_Date
+                                       && t.IdSaleNavigation.Timestamp.Value.Date <= end_Date)
                           .ToListAsync();
 
                 return _mapper.Map<List<ReportDTO>>(salesDetail);
