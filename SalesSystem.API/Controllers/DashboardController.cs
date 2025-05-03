@@ -2,7 +2,6 @@
 using SalesSystem.DTO;
 using SalesSystem.BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using SalesSystem.BLL.Services;
 
 namespace SalesSystem.API.Controllers
 {

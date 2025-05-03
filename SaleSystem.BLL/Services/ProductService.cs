@@ -12,13 +12,13 @@ namespace SalesSystem.BLL.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        internal IGenericRepository<Product> _productGenRepo;
+        private IGenericRepository<Product> _productGenRepo;
 
         public ProductService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            this._productGenRepo = _unitOfWork.GetRepository<Product>();
+            this._productGenRepo = _unitOfWork.GetGenRepo<Product>();
         }
 
         public async Task<List<ProductDTO>> GetAll()

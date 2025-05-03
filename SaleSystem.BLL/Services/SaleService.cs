@@ -20,7 +20,7 @@ namespace SalesSystem.BLL.Services
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            this._productGenSaleDetails = _unitOfWork.GetRepository<SaleDetails>();
+            this._productGenSaleDetails = _unitOfWork.GetGenRepo<SaleDetails>();
             this._saleRepository = _unitOfWork.SaleRepository;
         }
 

@@ -4,7 +4,7 @@ namespace SalesSystem.DAL.Repositories.Interfaces
 {
     public interface IGenericRepository<TModel> where TModel : class
     {
-        Task<TModel?> Get(Expression<Func<TModel, bool>>? filter);
+        Task<TModel?> Get(Expression<Func<TModel, bool>>? filter = null);
         Task<TModel> Create(TModel model);
         Task<bool> Update(TModel model);
         Task<bool> Delete(TModel model);

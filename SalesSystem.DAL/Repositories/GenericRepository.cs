@@ -1,5 +1,4 @@
-﻿using SalesSystem.DAL.DBContext;
-using SalesSystem.DAL.Repositories.Interfaces;
+﻿using SalesSystem.DAL.Repositories.Interfaces;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,17 +6,16 @@ namespace SalesSystem.DAL.Repositories
 {
     public class GenericRepository<TModel> : IGenericRepository<TModel> where TModel : class
     {
-        private readonly DbsaleContext _dbContext;
-        internal DbSet<TModel> dbSet;
+        private readonly IUnitOfWork _unitOfWork;
+        private DbSet<TModel> dbSet;
                     
-
-        public GenericRepository(DbsaleContext dbContext)
+        public GenericRepository(IUnitOfWork unitOfWork)
         {
-            _dbContext = dbContext; 
-            this.dbSet = dbContext.Set<TModel>();
+            _unitOfWork = unitOfWork; 
+            dbSet = unitOfWork.GetDbSet<TModel>();
         }
 
-        public async Task<TModel?> Get(Expression<Func<TModel, bool>>? filter)
+        public async Task<TModel?> Get(Expression<Func<TModel, bool>>? filter = null)
         {
             try
             {
@@ -52,7 +50,7 @@ namespace SalesSystem.DAL.Repositories
             try
             {
                 dbSet.Add(model);
-                await _dbContext.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
                 return model;
             }
             catch
@@ -66,7 +64,7 @@ namespace SalesSystem.DAL.Repositories
             try
             {
                 dbSet.Update(model);
-                var result = await _dbContext.SaveChangesAsync();
+                var result = await _unitOfWork.CommitAsync(); ;
                 if (result > 0)
                     return true;
                 else 
@@ -83,7 +81,7 @@ namespace SalesSystem.DAL.Repositories
             try
             {
                 dbSet.Remove(model);
-                var result = await _dbContext.SaveChangesAsync();
+                var result = await _unitOfWork.CommitAsync();
                 if (result > 0)
                     return true;
                 else

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SalesSystem.BLL.Services.Interfaces;
+using SalesSystem.DAL.Repositories;
 using SalesSystem.DAL.Repositories.Interfaces;
 using SalesSystem.DTO;
 using SalesSystem.Model.Entities;
@@ -9,12 +10,14 @@ namespace SalesSystem.BLL.Services
 {
     public class CategoryService: ICategoryService
     {
-        private readonly IGenericRepository<Category> _categoryRepository;
+        private readonly IGenericRepository<Category> _categoryGenRepo;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CategoryService(IGenericRepository<Category> categoryRepository, IMapper mapper)
+        public CategoryService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _categoryRepository = categoryRepository;
+            _unitOfWork = unitOfWork;
+            _categoryGenRepo = _unitOfWork.GetGenRepo<Category>();
             _mapper = mapper;
         }
 
@@ -22,7 +25,7 @@ namespace SalesSystem.BLL.Services
         {
             try
             {
-                var categories =  _categoryRepository.GetAll();
+                var categories =  _categoryGenRepo.GetAll();
                 return _mapper.Map<List<CategoryDTO>>(await categories.ToListAsync());
             }
             catch (Exception)

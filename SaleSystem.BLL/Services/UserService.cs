@@ -5,7 +5,6 @@ using SalesSystem.DAL.Repositories.Interfaces;
 using SalesSystem.DTO;
 using SalesSystem.Model.Entities;
 using SalesSystem.Utility;
-using System.Reflection.Metadata;
 
 namespace SalesSystem.BLL.Services
 {
@@ -59,7 +58,7 @@ namespace SalesSystem.BLL.Services
             {
                 var userFound = await _userRepository.Get(u => u.IdUser == id);
 
-                if (userFound.IdRol != Constants.rolAdmin)
+                if (userFound?.IdRol != Constants.rolAdmin)
                     throw new Exception("Nop!");
 
                 if (userFound.IdUser == 0)
@@ -85,7 +84,7 @@ namespace SalesSystem.BLL.Services
             {
                 var user = _mapper.Map<User>(userDTO);
                 var userFound = await _userRepository.Get(u => u.IdUser == userDTO.IdUser);
-                if (userFound.IdUser == 0)
+                if (userFound?.IdUser == 0)
                 {
                     throw new TaskCanceledException("The user does not exist.");
                 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SalesSystem.BLL.Services.Interfaces;
+using SalesSystem.DAL.Repositories;
 using SalesSystem.DAL.Repositories.Interfaces;
 using SalesSystem.DTO;
 using SalesSystem.Model.Entities;
@@ -9,12 +10,14 @@ namespace SalesSystem.BLL.Services
 {
     public class RolService: IRolService
     {
-        private readonly IGenericRepository<Rol> _rolRepository;
+        private readonly IGenericRepository<Rol> _rolGenRepo;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RolService(IGenericRepository<Rol> rolRepository, IMapper mapper)
+        public RolService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _rolRepository = rolRepository;
+            _unitOfWork = unitOfWork;
+            _rolGenRepo = _unitOfWork.GetGenRepo<Rol>();
             _mapper = mapper;
         }
 
@@ -22,7 +25,7 @@ namespace SalesSystem.BLL.Services
         {
             try
             {
-                var rols = _rolRepository.GetAll();
+                var rols = _rolGenRepo.GetAll();
                 return _mapper.Map<List<RolDTO>>(await rols.ToListAsync());
             }
             catch (Exception)

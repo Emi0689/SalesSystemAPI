@@ -4,32 +4,32 @@ using SalesSystem.DAL.Repositories.Interfaces;
 using SalesSystem.DTO;
 using SalesSystem.Model.Entities;
 using Microsoft.EntityFrameworkCore;
+using SalesSystem.DAL.Repositories;
 
 namespace SalesSystem.BLL.Services
 {
     public class MenuService : IMenuService
     {
-        private readonly IGenericRepository<Menu> _menuRepository;
-        private readonly IGenericRepository<User> _userRepository;
-        private readonly IGenericRepository<MenuRol> _menuRolRepository;
+        private readonly IGenericRepository<Menu> _menuGenRepo;
+        private readonly IGenericRepository<User> _userGenRepo;
+        private readonly IGenericRepository<MenuRol> _menuRolGenRepo;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public MenuService(IGenericRepository<Menu> menuRepository, 
-            IGenericRepository<User> userRepository, 
-            IGenericRepository<MenuRol> menuRolRepository, 
-            IMapper mapper)
+        public MenuService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _menuRepository = menuRepository;
-            _userRepository = userRepository;
-            _menuRolRepository = menuRolRepository;
+            _unitOfWork = unitOfWork;
+            _menuGenRepo = _unitOfWork.GetGenRepo<Menu>();
+            _userGenRepo = _unitOfWork.GetGenRepo<User>();
+            _menuRolGenRepo = _unitOfWork.GetGenRepo<MenuRol>();
             _mapper = mapper;
         }
 
         public async Task<List<MenuDTO>> GetMenu(int id)
         {
-            IQueryable<User> user =  _userRepository.GetAll(u => u.IdUser == id);
-            IQueryable<MenuRol> menuRols =  _menuRolRepository.GetAll();
-            IQueryable<Menu> menu =  _menuRepository.GetAll();
+            IQueryable<User> user =  _userGenRepo.GetAll(u => u.IdUser == id);
+            IQueryable<MenuRol> menuRols =  _menuRolGenRepo.GetAll();
+            IQueryable<Menu> menu =  _menuGenRepo.GetAll();
 
             try
             {

@@ -18,6 +18,8 @@ namespace SalesSystem.IOC
                 options.UseSqlServer(configuration.GetConnectionString("stringSQL"));
             });
 
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ISaleRepository>(provider => provider.GetRequiredService<IUnitOfWork>().SaleRepository);
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddAutoMapper(typeof(AutoMapperProfile));
 

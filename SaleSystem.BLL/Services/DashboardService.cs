@@ -1,6 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SalesSystem.BLL.Services.Interfaces;
+using SalesSystem.DAL.Repositories;
 using SalesSystem.DAL.Repositories.Interfaces;
 using SalesSystem.DTO;
 using SalesSystem.Model.Entities;
@@ -10,15 +10,15 @@ namespace SalesSystem.BLL.Services
 {
     public class DashboardService : IDashboardService
     {
-        private readonly IGenericRepository<Product> _productRepository;
+        private readonly IGenericRepository<Product> _productGenRepo;
         private readonly ISaleRepository _saleRepository;
-        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DashboardService(IGenericRepository<Product> productRepository, ISaleRepository saleRepository, IMapper mapper)
+        public DashboardService(IUnitOfWork unitOfWork)
         {
-            _productRepository = productRepository;
-            _saleRepository = saleRepository;
-            _mapper = mapper;
+            _unitOfWork = unitOfWork;
+            _saleRepository = _unitOfWork.SaleRepository;
+            _productGenRepo = _unitOfWork.GetGenRepo<Product>();
         }
 
         public async Task<DashboardDTO> Resume()
@@ -86,7 +86,7 @@ namespace SalesSystem.BLL.Services
 
         private async Task<int> ProductTotal()
         {
-            IQueryable<Product> _queryProduct = _productRepository.GetAll();
+            IQueryable<Product> _queryProduct = _productGenRepo.GetAll();
             int total = await _queryProduct.CountAsync();
 
             return total;

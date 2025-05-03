@@ -3,19 +3,21 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SalesSystem.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using SalesSystem.Model.Entities;
 
 namespace SalesSystem.DAL.Repositories
 {
     public interface IUnitOfWork : IDisposable
     {
-        void Commit();
-        Task CommitAsync();
+        Task<int> CommitAsync();
         ValueTask<EntityEntry> AddAsync(object model);
         IDbContextTransaction BeginTransaction();
         void RollbackTransaction();
         void CommitTransaction();
-        IGenericRepository<T> GetRepository<T>() where T : class;
-        ISaleRepository SaleRepository { get; } 
+        IGenericRepository<T> GetGenRepo<T>() where T : class;
+        void Update(object entity);
+        ISaleRepository SaleRepository { get; }
+        DbSet<TModel> GetDbSet<TModel>() where TModel : class;
     }
 
     public class UnitOfWork : IUnitOfWork
@@ -30,25 +32,28 @@ namespace SalesSystem.DAL.Repositories
         }
 
         public ISaleRepository SaleRepository =>
-            _saleRepository ??= new SaleRepository(_dbContext);
+            _saleRepository ??= new SaleRepository(this);
 
-        public IGenericRepository<T> GetRepository<T>() where T : class
+        public IGenericRepository<T> GetGenRepo<T>() where T : class
         {
             var type = typeof(T);
             if (_typedGenericRepository.TryGetValue(type, out var repo))
                 return (IGenericRepository<T>)repo;
 
-            var repoInstance = new GenericRepository<T>(_dbContext);
+            var repoInstance = new GenericRepository<T>(this);
             _typedGenericRepository[type] = repoInstance;
 
             return repoInstance;
         }
-        
 
+        public void Update(object entity) => _dbContext.Update(entity);
 
-        public void Commit() => _dbContext.SaveChanges();
+        public DbSet<TModel> GetDbSet<TModel>() where TModel : class
+        {
+            return _dbContext.Set<TModel>(); 
+        }
 
-        public Task CommitAsync() => _dbContext.SaveChangesAsync();
+        public Task<int> CommitAsync() => _dbContext.SaveChangesAsync();
 
         public ValueTask<EntityEntry> AddAsync(object model) => _dbContext.AddAsync(model);
 
