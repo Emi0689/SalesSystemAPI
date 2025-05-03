@@ -5,6 +5,6 @@ namespace SalesSystem.DAL.Repositories.Interfaces
 {
     public interface ISaleRepository : IGenericRepository<Sale>
     {
-        Task<Sale> Create(Sale Sale);
+        Task<Sale> CreateSaleAsync(Sale Sale);
     }
 }

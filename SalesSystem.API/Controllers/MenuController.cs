@@ -25,7 +25,7 @@ namespace SalesSystem.API.Controllers
             try
             {
                 rsp.Status = true;
-                rsp.Value = await _menuService.GetMenu(userId);
+                rsp.Value = await _menuService.GetMenuAsync(userId);
             }
             catch (Exception ex)
             {

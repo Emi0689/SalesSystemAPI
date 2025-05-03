@@ -25,11 +25,11 @@ namespace SalesSystem.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<List<MenuDTO>> GetMenu(int id)
+        public async Task<List<MenuDTO>> GetMenuAsync(int id)
         {
-            IQueryable<User> user =  _userGenRepo.GetAll(u => u.IdUser == id);
-            IQueryable<MenuRol> menuRols =  _menuRolGenRepo.GetAll();
-            IQueryable<Menu> menu =  _menuGenRepo.GetAll();
+            IQueryable<User> user =  _userGenRepo.GetAllAsync(u => u.IdUser == id);
+            IQueryable<MenuRol> menuRols =  _menuRolGenRepo.GetAllAsync();
+            IQueryable<Menu> menu =  _menuGenRepo.GetAllAsync();
 
             try
             {

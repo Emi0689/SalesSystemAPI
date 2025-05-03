@@ -19,11 +19,11 @@ namespace SalesSystem.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<List<UserDTO>> GetAll()
+        public async Task<List<UserDTO>> GetAllAsync()
         {
             try
             {
-                var userQuery =  _userRepository.GetAll();
+                var userQuery =  _userRepository.GetAllAsync();
                 var users = await userQuery.Include(rol => rol.IdRolNavigation).ToListAsync();
                 return _mapper.Map<List<UserDTO>>(users);
             }
@@ -33,16 +33,16 @@ namespace SalesSystem.BLL.Services
             }
         }
 
-        public async Task<UserDTO> Create(UserDTO userDTO)
+        public async Task<UserDTO> CreateAsync(UserDTO userDTO)
         {
             try
             {
-                var userCreated = await _userRepository.Create(_mapper.Map<User>(userDTO));
+                var userCreated = await _userRepository.CreateAsync(_mapper.Map<User>(userDTO));
                 if (userCreated.IdUser == 0)
                 {
                     throw new TaskCanceledException("The user does not exist.");
                 }
-                var query =  _userRepository.GetAll(u => u.IdUser == userCreated.IdUser);
+                var query =  _userRepository.GetAllAsync(u => u.IdUser == userCreated.IdUser);
                 userCreated = await query.Include(rol => rol.IdRolNavigation).FirstAsync();
                 return _mapper.Map<UserDTO>(userCreated);
             }
@@ -52,11 +52,11 @@ namespace SalesSystem.BLL.Services
             }
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             try
             {
-                var userFound = await _userRepository.Get(u => u.IdUser == id);
+                var userFound = await _userRepository.GetAsync(u => u.IdUser == id);
 
                 if (userFound?.IdRol != Constants.rolAdmin)
                     throw new Exception("Nop!");
@@ -65,7 +65,7 @@ namespace SalesSystem.BLL.Services
                 {
                     throw new TaskCanceledException("The user does not exist");
                 }
-                bool result = await _userRepository.Delete(userFound);
+                bool result = await _userRepository.DeleteAsync(userFound);
                 if (!result)
                 {
                     throw new TaskCanceledException("The user could not be deleted.");
@@ -78,12 +78,12 @@ namespace SalesSystem.BLL.Services
             }
         }
 
-        public async Task<bool> Update(UserDTO userDTO)
+        public async Task<bool> UpdateAsync(UserDTO userDTO)
         {
             try
             {
                 var user = _mapper.Map<User>(userDTO);
-                var userFound = await _userRepository.Get(u => u.IdUser == userDTO.IdUser);
+                var userFound = await _userRepository.GetAsync(u => u.IdUser == userDTO.IdUser);
                 if (userFound?.IdUser == 0)
                 {
                     throw new TaskCanceledException("The user does not exist.");
@@ -94,7 +94,7 @@ namespace SalesSystem.BLL.Services
                 userFound.IsActive = user.IsActive;
                 userFound.Password = user.Password;
 
-                bool result = await _userRepository.Update(userFound);
+                bool result = await _userRepository.UpdateAsync(userFound);
 
                 if (!result)
                 {
@@ -108,11 +108,11 @@ namespace SalesSystem.BLL.Services
             }
         }
 
-        public async Task<SessionDTO> ValidateCredentials(string email, string password)
+        public async Task<SessionDTO> ValidateCredentialsAsync(string email, string password)
         {
             try
             {
-                var userQuery =  _userRepository.GetAll(u => u.Email == email && u.Password == password);
+                var userQuery =  _userRepository.GetAllAsync(u => u.Email == email && u.Password == password);
 
                 User user = await userQuery.Include(rol => rol.IdRolNavigation).FirstAsync();
 

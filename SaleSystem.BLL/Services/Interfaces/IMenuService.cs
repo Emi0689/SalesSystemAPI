@@ -10,6 +10,6 @@ namespace SalesSystem.BLL.Services.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<List<MenuDTO>> GetMenu(int id);
+        Task<List<MenuDTO>> GetMenuAsync(int id);
     }
 }

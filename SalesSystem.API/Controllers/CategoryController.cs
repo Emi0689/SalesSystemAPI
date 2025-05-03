@@ -25,7 +25,7 @@ namespace SalesSystem.API.Controllers
             try
             {
                 rsp.Status = true;
-                rsp.Value = await _categoryService.GetAll();
+                rsp.Value = await _categoryService.GetAllAsync();
             }
             catch (Exception ex)
             {

@@ -25,7 +25,7 @@ namespace SalesSystem.API.Controllers
             try
             {
                 rsp.Status = true;
-                rsp.Value = await _productService.GetAll();
+                rsp.Value = await _productService.GetAllAsync();
             }
             catch (Exception ex)
             {
@@ -43,7 +43,7 @@ namespace SalesSystem.API.Controllers
             try
             {
                 rsp.Status = true;
-                rsp.Value = await _productService.Create(productDTO);
+                rsp.Value = await _productService.CreateAsync(productDTO);
             }
             catch (Exception ex)
             {
@@ -61,7 +61,7 @@ namespace SalesSystem.API.Controllers
             try
             {
                 rsp.Status = true;
-                rsp.Value = await _productService.Update(productDTO);
+                rsp.Value = await _productService.UpdateAsync(productDTO);
             }
             catch (Exception ex)
             {
@@ -79,7 +79,7 @@ namespace SalesSystem.API.Controllers
             try
             {
                 rsp.Status = true;
-                rsp.Value = await _productService.Delete(productId);
+                rsp.Value = await _productService.DeleteAsync(productId);
             }
             catch (Exception ex)
             {

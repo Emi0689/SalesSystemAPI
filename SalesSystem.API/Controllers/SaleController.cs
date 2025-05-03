@@ -25,7 +25,7 @@ namespace SalesSystem.API.Controllers
             try
             {
                 rsp.Status = true;
-                rsp.Value = await _saleService.Create(saleDTO);
+                rsp.Value = await _saleService.CreateAsync(saleDTO);
             }
             catch (Exception ex)
             {
@@ -43,7 +43,7 @@ namespace SalesSystem.API.Controllers
             try
             {
                 rsp.Status = true;
-                rsp.Value = await _saleService.History(searchFor, saleNumber, startDate, endDate);
+                rsp.Value = await _saleService.HistoryAsync(searchFor, saleNumber, startDate, endDate);
             }
             catch (Exception ex)
             {
@@ -62,7 +62,7 @@ namespace SalesSystem.API.Controllers
             try
             {
                 rsp.Status = true;
-                rsp.Value = await _saleService.Report(startDate, endDate);
+                rsp.Value = await _saleService.GetReportAsync(startDate, endDate);
             }
             catch (Exception ex)
             {

@@ -4,10 +4,10 @@ namespace SalesSystem.BLL.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<List<UserDTO>> GetAll();
-        Task<SessionDTO> ValidateCredentials(string email, string password);
-        Task<UserDTO> Create(UserDTO userDTO);
-        Task<bool> Update(UserDTO userDTO);
-        Task<bool> Delete(int id);
+        Task<List<UserDTO>> GetAllAsync();
+        Task<SessionDTO> ValidateCredentialsAsync(string email, string password);
+        Task<UserDTO> CreateAsync(UserDTO userDTO);
+        Task<bool> UpdateAsync(UserDTO userDTO);
+        Task<bool> DeleteAsync(int id);
     }
 }

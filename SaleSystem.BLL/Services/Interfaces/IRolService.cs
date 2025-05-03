@@ -4,6 +4,6 @@ namespace SalesSystem.BLL.Services.Interfaces
 {
     public interface IRolService
     {
-        Task<List<RolDTO>> GetAll();
+        Task<List<RolDTO>> GetAllAsync();
     }
 }

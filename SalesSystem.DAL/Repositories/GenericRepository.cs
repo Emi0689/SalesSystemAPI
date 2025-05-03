@@ -15,7 +15,7 @@ namespace SalesSystem.DAL.Repositories
             dbSet = unitOfWork.GetDbSet<TModel>();
         }
 
-        public async Task<TModel?> Get(Expression<Func<TModel, bool>>? filter = null)
+        public async Task<TModel?> GetAsync(Expression<Func<TModel, bool>>? filter = null)
         {
             try
             {
@@ -31,7 +31,34 @@ namespace SalesSystem.DAL.Repositories
             }
         }
 
-        public IQueryable<TModel> GetAll(Expression<Func<TModel, bool>>? filter = null)
+        public async Task<IEnumerable<TModel>> GetAsync(Expression<Func<TModel, bool>> whereCondition = null,
+                          Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderBy = null,
+                          string includeProperties = "")
+        {
+            IQueryable<TModel> query = dbSet;
+
+            if (whereCondition != null)
+            {
+                query = query.Where(whereCondition);
+            }
+
+            foreach (var includeProperty in includeProperties.Split
+                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            if (orderBy != null)
+            {
+                return await orderBy(query).ToListAsync();
+            }
+            else
+            {
+                return await query.ToListAsync();
+            }
+        }
+
+        public IQueryable<TModel> GetAllAsync(Expression<Func<TModel, bool>>? filter = null)
         {
             try
             { 
@@ -45,7 +72,7 @@ namespace SalesSystem.DAL.Repositories
             }
         }
 
-        public async Task<TModel> Create(TModel model)
+        public async Task<TModel> CreateAsync(TModel model)
         {
             try
             {
@@ -59,7 +86,7 @@ namespace SalesSystem.DAL.Repositories
             }
         }
 
-        public async Task<bool> Update(TModel model)
+        public async Task<bool> UpdateAsync(TModel model)
         {
             try
             {
@@ -76,7 +103,7 @@ namespace SalesSystem.DAL.Repositories
             }
         }
 
-        public async Task<bool> Delete(TModel model)
+        public async Task<bool> DeleteAsync(TModel model)
         {
             try
             {

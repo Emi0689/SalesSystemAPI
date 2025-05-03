@@ -10,6 +10,6 @@ namespace SalesSystem.BLL.Services.Interfaces
 {
     public interface ICategoryService
     {
-        Task<List<CategoryDTO>> GetAll();
+        Task<List<CategoryDTO>> GetAllAsync();
     }
 }

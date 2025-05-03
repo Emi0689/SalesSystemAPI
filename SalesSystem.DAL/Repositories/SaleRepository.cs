@@ -12,7 +12,7 @@ namespace SalesSystem.DAL.Repositories
             _unitOfWork = unitOfWork;
         }
 
-        public new async Task<Sale> Create(Sale sale)
+        public async Task<Sale> CreateSaleAsync(Sale sale)
         {
             Sale saleGenerated = new Sale();
 
@@ -24,7 +24,7 @@ namespace SalesSystem.DAL.Repositories
                 ///////////remove product from stock/////////
                 foreach (SaleDetails sl in sale.SaleDetails)
                 {
-                    var product_found = await _unitOfWork.GetGenRepo<Product>().Get(p => p.IdProduct == sl.IdProduct);
+                    var product_found = await _unitOfWork.GetGenRepo<Product>().GetAsync(p => p.IdProduct == sl.IdProduct);
                     if (product_found != null)
                     {
                         product_found.Stock = product_found.Stock - sl.Amount;
@@ -39,7 +39,7 @@ namespace SalesSystem.DAL.Repositories
                 /////////////////////////////////////////////
 
                 ///////////new ID value/////////
-                var idnumberNext = await _unitOfWork.GetGenRepo<IdNumber>().Get();
+                var idnumberNext = await _unitOfWork.GetGenRepo<IdNumber>().GetAsync();
                 if(idnumberNext != null)
                 {
                     idnumberNext.LastNumber = idnumberNext.LastNumber + 1;

@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SalesSystem.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using SalesSystem.Model.Entities;
 
 namespace SalesSystem.DAL.Repositories
 {
@@ -48,10 +47,7 @@ namespace SalesSystem.DAL.Repositories
 
         public void Update(object entity) => _dbContext.Update(entity);
 
-        public DbSet<TModel> GetDbSet<TModel>() where TModel : class
-        {
-            return _dbContext.Set<TModel>(); 
-        }
+        public DbSet<TModel> GetDbSet<TModel>() where TModel : class => _dbContext.Set<TModel>(); 
 
         public Task<int> CommitAsync() => _dbContext.SaveChangesAsync();
 

@@ -4,10 +4,10 @@ namespace SalesSystem.DAL.Repositories.Interfaces
 {
     public interface IGenericRepository<TModel> where TModel : class
     {
-        Task<TModel?> Get(Expression<Func<TModel, bool>>? filter = null);
-        Task<TModel> Create(TModel model);
-        Task<bool> Update(TModel model);
-        Task<bool> Delete(TModel model);
-        IQueryable<TModel> GetAll(Expression<Func<TModel, bool>>? filter = null);
+        Task<TModel?> GetAsync(Expression<Func<TModel, bool>>? filter = null);
+        Task<TModel> CreateAsync(TModel model);
+        Task<bool> UpdateAsync(TModel model);
+        Task<bool> DeleteAsync(TModel model);
+        IQueryable<TModel> GetAllAsync(Expression<Func<TModel, bool>>? filter = null);
     }
 }

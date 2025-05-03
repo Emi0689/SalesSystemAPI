@@ -4,9 +4,9 @@ namespace SalesSystem.BLL.Services.Interfaces
 {
     public interface IProductService
     {
-        Task<List<ProductDTO>> GetAll();
-        Task<ProductDTO> Create(ProductDTO ProductDTO);
-        Task<bool> Update(ProductDTO ProductDTO);
-        Task<bool> Delete(int id);
+        Task<List<ProductDTO>> GetAllAsync();
+        Task<ProductDTO> CreateAsync(ProductDTO ProductDTO);
+        Task<bool> UpdateAsync(ProductDTO ProductDTO);
+        Task<bool> DeleteAsync(int id);
     }
 }

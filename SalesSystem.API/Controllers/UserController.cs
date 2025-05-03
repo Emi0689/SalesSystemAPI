@@ -26,7 +26,7 @@ namespace SalesSystem.API.Controllers
             try
             {
                 rsp.Status = true;
-                rsp.Value = await _userService.GetAll();
+                rsp.Value = await _userService.GetAllAsync();
             }
             catch (Exception ex)
             {
@@ -45,7 +45,7 @@ namespace SalesSystem.API.Controllers
             try
             {
                 rsp.Status = true;
-                rsp.Value = await _userService.ValidateCredentials(loginDTO.Email, loginDTO.Password);
+                rsp.Value = await _userService.ValidateCredentialsAsync(loginDTO.Email, loginDTO.Password);
             }
             catch (Exception ex)
             {
@@ -66,7 +66,7 @@ namespace SalesSystem.API.Controllers
                     throw new Exception("Nop!");
 
                 rsp.Status = true;
-                rsp.Value = await _userService.Create(userDTO);
+                rsp.Value = await _userService.CreateAsync(userDTO);
             }
             catch (Exception ex)
             {
@@ -87,7 +87,7 @@ namespace SalesSystem.API.Controllers
                     throw new Exception("Nop!");
 
                 rsp.Status = true;
-                rsp.Value = await _userService.Update(userDTO);
+                rsp.Value = await _userService.UpdateAsync(userDTO);
             }
             catch (Exception ex)
             {
@@ -105,7 +105,7 @@ namespace SalesSystem.API.Controllers
             try
             {
                 rsp.Status = true;
-                rsp.Value = await _userService.Delete(id);
+                rsp.Value = await _userService.DeleteAsync(id);
             }
             catch (Exception ex)
             {
