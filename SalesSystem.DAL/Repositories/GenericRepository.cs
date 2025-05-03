@@ -8,17 +8,23 @@ namespace SalesSystem.DAL.Repositories
     public class GenericRepository<TModel> : IGenericRepository<TModel> where TModel : class
     {
         private readonly DbsaleContext _dbContext;
+        internal DbSet<TModel> dbSet;
+                    
 
         public GenericRepository(DbsaleContext dbContext)
         {
-            _dbContext = dbContext;
+            _dbContext = dbContext; 
+            this.dbSet = dbContext.Set<TModel>();
         }
 
-        public async Task<TModel> Get(Expression<Func<TModel, bool>> filter)
+        public async Task<TModel?> Get(Expression<Func<TModel, bool>>? filter)
         {
             try
             {
-                TModel model = filter == null ? await _dbContext.Set<TModel>().FirstOrDefaultAsync() : await _dbContext.Set<TModel>().Where(filter).FirstOrDefaultAsync();
+
+                TModel? model = filter == null ? await dbSet.FirstOrDefaultAsync() : 
+                                                 await dbSet.Where(filter).FirstOrDefaultAsync();
+
                 return model;
             }
             catch
@@ -27,11 +33,12 @@ namespace SalesSystem.DAL.Repositories
             }
         }
 
-        public async Task<IQueryable<TModel>> GetAll(Expression<Func<TModel, bool>> filter = null)
+        public IQueryable<TModel> GetAll(Expression<Func<TModel, bool>>? filter = null)
         {
             try
-            {
-                IQueryable<TModel> queryModel = filter == null ? _dbContext.Set<TModel>() : _dbContext.Set<TModel>().Where(filter);
+            { 
+                IQueryable<TModel> queryModel = filter == null ? dbSet :
+                                                                 dbSet.Where(filter);
                 return queryModel;
             }
             catch
@@ -44,7 +51,7 @@ namespace SalesSystem.DAL.Repositories
         {
             try
             {
-                _dbContext.Set<TModel>().Add(model);
+                dbSet.Add(model);
                 await _dbContext.SaveChangesAsync();
                 return model;
             }
@@ -58,7 +65,7 @@ namespace SalesSystem.DAL.Repositories
         {
             try
             {
-                _dbContext.Set<TModel>().Update(model);
+                dbSet.Update(model);
                 var result = await _dbContext.SaveChangesAsync();
                 if (result > 0)
                     return true;
@@ -75,7 +82,7 @@ namespace SalesSystem.DAL.Repositories
         {
             try
             {
-                _dbContext.Set<TModel>().Remove(model);
+                dbSet.Remove(model);
                 var result = await _dbContext.SaveChangesAsync();
                 if (result > 0)
                     return true;

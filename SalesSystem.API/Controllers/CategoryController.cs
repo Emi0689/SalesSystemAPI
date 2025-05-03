@@ -24,13 +24,13 @@ namespace SalesSystem.API.Controllers
             var rsp = new Response<List<CategoryDTO>>();
             try
             {
-                rsp.status = true;
-                rsp.value = await _categoryService.GetAll();
+                rsp.Status = true;
+                rsp.Value = await _categoryService.GetAll();
             }
             catch (Exception ex)
             {
-                rsp.status = false;
-                rsp.message = ex.Message;
+                rsp.Status = false;
+                rsp.ErrorMessage = ex.Message;
             }
             return Ok(rsp);
         }

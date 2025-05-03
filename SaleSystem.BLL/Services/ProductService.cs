@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SalesSystem.BLL.Services.Interfaces;
+using SalesSystem.DAL.Repositories;
 using SalesSystem.DAL.Repositories.Interfaces;
 using SalesSystem.DTO;
 using SalesSystem.Model.Entities;
@@ -9,21 +10,24 @@ namespace SalesSystem.BLL.Services
 {
     public class ProductService : IProductService
     {
-        private readonly IGenericRepository<Product> _productRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        internal IGenericRepository<Product> _productGenRepo;
 
-        public ProductService(IGenericRepository<Product> ProductRepository, IMapper mapper)
+        public ProductService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _productRepository = ProductRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
+            this._productGenRepo = _unitOfWork.GetRepository<Product>();
         }
 
         public async Task<List<ProductDTO>> GetAll()
         {
             try
             {
-                var productQuery = await _productRepository.GetAll();
-                var products = productQuery.Include(rol => rol.IdCategoryNavigation).ToList();
+                var productQuery = _productGenRepo.GetAll();
+                var productQueryWithRol = productQuery.Include(rol => rol.IdCategoryNavigation);
+                var products = await productQueryWithRol.ToListAsync();
                 return _mapper.Map<List<ProductDTO>>(products);
             }
             catch (Exception)
@@ -37,13 +41,13 @@ namespace SalesSystem.BLL.Services
         {
             try
             {
-                var productCreated = await _productRepository.Create(_mapper.Map<Product>(ProductDTO));
+                var productCreated = await _productGenRepo.Create(_mapper.Map<Product>(ProductDTO));
                 if (productCreated.IdProduct == 0)
                 {
                     throw new TaskCanceledException("The product does not exist.");
                 }
-                var query = await _productRepository.GetAll(u => u.IdProduct == productCreated.IdProduct);
-                productCreated = query.Include(rol => rol.IdCategoryNavigation).First();
+                var query = _productGenRepo.GetAll(u => u.IdProduct == productCreated.IdProduct);
+                productCreated = await query.Include(rol => rol.IdCategoryNavigation).FirstAsync();
                 return _mapper.Map<ProductDTO>(productCreated);
             }
             catch (Exception)
@@ -57,8 +61,8 @@ namespace SalesSystem.BLL.Services
             try
             {
                 var product = _mapper.Map<Product>(ProductDTO);
-                var productFound = await _productRepository.Get(u => u.IdProduct == ProductDTO.IdProduct);
-                if (productFound.IdProduct == 0)
+                var productFound = await _productGenRepo.Get(u => u.IdProduct == ProductDTO.IdProduct);
+                if (productFound?.IdProduct == 0)
                 {
                     throw new TaskCanceledException("The Product does not exist.");
                 }
@@ -68,7 +72,7 @@ namespace SalesSystem.BLL.Services
                 productFound.IsActive = product.IsActive;
                 productFound.Name = product.Name;
 
-                bool result = await _productRepository.Update(productFound);
+                bool result = await _productGenRepo.Update(productFound);
 
                 if (!result)
                 {
@@ -86,12 +90,12 @@ namespace SalesSystem.BLL.Services
         {
             try
             {
-                var productFound = await _productRepository.Get(u => u.IdProduct == id);
+                var productFound = await _productGenRepo.Get(u => u.IdProduct == id);
                 if (productFound.IdProduct == 0)
                 {
                     throw new TaskCanceledException("The product does not exist.");
                 }
-                bool result = await _productRepository.Delete(productFound);
+                bool result = await _productGenRepo.Delete(productFound);
                 if (!result)
                 {
                     throw new TaskCanceledException("The product could not be updated.");

@@ -2,10 +2,10 @@
 {
     public class Response<T>
     {
-        public bool status { get; set; }
+        public bool Status { get; set; }
 
-        public T value { get; set; }
+        public T Value { get; set; }
 
-        public string message { get; set; }
+        public string? ErrorMessage { get; set; }
     }
 }

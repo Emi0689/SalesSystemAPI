@@ -24,13 +24,13 @@ namespace SalesSystem.API.Controllers
             var rsp = new Response<List<ProductDTO>>();
             try
             {
-                rsp.status = true;
-                rsp.value = await _productService.GetAll();
+                rsp.Status = true;
+                rsp.Value = await _productService.GetAll();
             }
             catch (Exception ex)
             {
-                rsp.status = false;
-                rsp.message = ex.Message;
+                rsp.Status = false;
+                rsp.ErrorMessage = ex.Message;
             }
             return Ok(rsp);
         }
@@ -42,13 +42,13 @@ namespace SalesSystem.API.Controllers
             var rsp = new Response<ProductDTO>();
             try
             {
-                rsp.status = true;
-                rsp.value = await _productService.Create(productDTO);
+                rsp.Status = true;
+                rsp.Value = await _productService.Create(productDTO);
             }
             catch (Exception ex)
             {
-                rsp.status = false;
-                rsp.message = ex.Message;
+                rsp.Status = false;
+                rsp.ErrorMessage = ex.Message;
             }
             return Ok(rsp);
         }
@@ -60,13 +60,13 @@ namespace SalesSystem.API.Controllers
             var rsp = new Response<bool>();
             try
             {
-                rsp.status = true;
-                rsp.value = await _productService.Update(productDTO);
+                rsp.Status = true;
+                rsp.Value = await _productService.Update(productDTO);
             }
             catch (Exception ex)
             {
-                rsp.status = false;
-                rsp.message = ex.Message;
+                rsp.Status = false;
+                rsp.ErrorMessage = ex.Message;
             }
             return Ok(rsp);
         }
@@ -78,13 +78,13 @@ namespace SalesSystem.API.Controllers
             var rsp = new Response<bool>();
             try
             {
-                rsp.status = true;
-                rsp.value = await _productService.Delete(productId);
+                rsp.Status = true;
+                rsp.Value = await _productService.Delete(productId);
             }
             catch (Exception ex)
             {
-                rsp.status = false;
-                rsp.message = ex.Message;
+                rsp.Status = false;
+                rsp.ErrorMessage = ex.Message;
             }
             return Ok(rsp);
         }

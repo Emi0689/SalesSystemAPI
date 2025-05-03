@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SalesSystem.BLL.Services.Interfaces;
 using SalesSystem.DAL.Repositories.Interfaces;
 using SalesSystem.DTO;
@@ -24,8 +22,8 @@ namespace SalesSystem.BLL.Services
         {
             try
             {
-                var rols = await _rolRepository.GetAll();
-                return _mapper.Map<List<RolDTO>>(rols.ToList());
+                var rols = _rolRepository.GetAll();
+                return _mapper.Map<List<RolDTO>>(await rols.ToListAsync());
             }
             catch (Exception)
             {

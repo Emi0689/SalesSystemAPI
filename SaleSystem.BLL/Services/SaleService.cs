@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SalesSystem.BLL.Services.Interfaces;
+using SalesSystem.DAL.Repositories;
 using SalesSystem.DAL.Repositories.Interfaces;
 using SalesSystem.DTO;
 using SalesSystem.Model.Entities;
@@ -8,19 +9,19 @@ using System.Globalization;
 
 namespace SalesSystem.BLL.Services
 {
-    public class SaleService: ISaleService
+    public class SaleService : ISaleService
     {
-        private readonly IGenericRepository<SaleDetails> _saleDetailRepository;
-        private readonly ISaleRepository _saleRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        internal IGenericRepository<SaleDetails> _productGenSaleDetails;
+        internal ISaleRepository _saleRepository;
 
-        public SaleService(IGenericRepository<SaleDetails> saleDetailRepositoryaleRepository,
-                           ISaleRepository saleRepository,
-                           IMapper mapper)
+        public SaleService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _saleDetailRepository = saleDetailRepositoryaleRepository;
-            _saleRepository = saleRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
+            this._productGenSaleDetails = _unitOfWork.GetRepository<SaleDetails>();
+            this._saleRepository = _unitOfWork.SaleRepository;
         }
 
         public async Task<SaleDTO> Create(SaleDTO SaleDTO)
@@ -28,7 +29,7 @@ namespace SalesSystem.BLL.Services
             try
             {
                 var saleCreated = await _saleRepository.Create(_mapper.Map<Sale>(SaleDTO));
-                if(saleCreated.IdSale == 0)
+                if (saleCreated.IdSale == 0)
                 {
                     throw new TaskCanceledException("The Sale could not be created.");
                 }
@@ -42,7 +43,7 @@ namespace SalesSystem.BLL.Services
 
         public async Task<List<SaleDTO>> History(string searchFor, string saleNumber, string startDate, string endDate)
         {
-            IQueryable<Sale> query = await _saleRepository.GetAll();
+            IQueryable<Sale> query = _saleRepository.GetAll();
 
             var sales = new List<Sale>();
 
@@ -79,7 +80,7 @@ namespace SalesSystem.BLL.Services
 
         public async Task<List<ReportDTO>> Report(string startDate, string endDate)
         {
-            IQueryable<SaleDetails> query = await _saleDetailRepository.GetAll();
+            IQueryable<SaleDetails> query = _productGenSaleDetails.GetAll();
             var salesDetail = new List<SaleDetails>();
 
             try

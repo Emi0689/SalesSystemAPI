@@ -6,37 +6,37 @@ namespace SalesSystem.DAL.Repositories
 {
     public class SaleRepository: GenericRepository<Sale>, ISaleRepository
     {
-        private readonly DbsaleContext _dbsaleContext;
+        private readonly DbsaleContext _dbContext;
 
         public SaleRepository(DbsaleContext dbContext) : base(dbContext)
         {
-            _dbsaleContext = dbContext;
+            _dbContext = dbContext;
         }
 
         public new async Task<Sale> Create(Sale sale)
         {
             Sale saleGenerated = new Sale();
 
-            using(var transaccion = _dbsaleContext.Database.BeginTransaction())
+            using (var transaccion = _dbContext.Database.BeginTransaction())
             {
                 try
                 {
-  
+
                     ///////////remove product from stock/////////
                     foreach (SaleDetails sl in sale.SaleDetails)
                     {
-                        Product product_found = _dbsaleContext.Products.Where(p => p.IdProduct == sl.IdProduct).First();
+                        Product product_found = _dbContext.Products.Where(p => p.IdProduct == sl.IdProduct).First();
                         product_found.Stock = product_found.Stock - sl.Amount;
-                        _dbsaleContext.Update(product_found);
+                        _dbContext.Update(product_found);
                     }
-                    await _dbsaleContext.SaveChangesAsync();
+                    await _dbContext.SaveChangesAsync();
                     /////////////////////////////////////////////
 
                     ///////////new ID value/////////
-                    IdNumber idnumberNext = _dbsaleContext.Idnumbers.First();
+                    IdNumber idnumberNext = _dbContext.Idnumbers.First();
                     idnumberNext.LastNumber = idnumberNext.LastNumber + 1;
                     idnumberNext.Timestamp = DateTime.Now;
-                    await _dbsaleContext.SaveChangesAsync();
+                    await _dbContext.SaveChangesAsync();
                     /////////////////////////////////////////////
 
 
@@ -48,8 +48,8 @@ namespace SalesSystem.DAL.Repositories
 
                     sale.IdNumber = iDSaleNumber;
 
-                    await _dbsaleContext.AddAsync(sale);
-                    await _dbsaleContext.SaveChangesAsync();
+                    await _dbContext.AddAsync(sale);
+                    await _dbContext.SaveChangesAsync();
 
                     saleGenerated = sale;
 

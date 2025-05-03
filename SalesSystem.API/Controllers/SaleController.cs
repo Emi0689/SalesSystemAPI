@@ -24,13 +24,13 @@ namespace SalesSystem.API.Controllers
             var rsp = new Response<SaleDTO>();
             try
             {
-                rsp.status = true;
-                rsp.value = await _saleService.Create(saleDTO);
+                rsp.Status = true;
+                rsp.Value = await _saleService.Create(saleDTO);
             }
             catch (Exception ex)
             {
-                rsp.status = false;
-                rsp.message = ex.Message;
+                rsp.Status = false;
+                rsp.ErrorMessage = ex.Message;
             }
             return Ok(rsp);
         }
@@ -42,13 +42,13 @@ namespace SalesSystem.API.Controllers
             var rsp = new Response<List<SaleDTO>>();
             try
             {
-                rsp.status = true;
-                rsp.value = await _saleService.History(searchFor, saleNumber, startDate, endDate);
+                rsp.Status = true;
+                rsp.Value = await _saleService.History(searchFor, saleNumber, startDate, endDate);
             }
             catch (Exception ex)
             {
-                rsp.status = false;
-                rsp.message = ex.Message;
+                rsp.Status = false;
+                rsp.ErrorMessage = ex.Message;
             }
             return Ok(rsp);
         }
@@ -61,13 +61,13 @@ namespace SalesSystem.API.Controllers
             var rsp = new Response<List<ReportDTO>>();
             try
             {
-                rsp.status = true;
-                rsp.value = await _saleService.Report(startDate, endDate);
+                rsp.Status = true;
+                rsp.Value = await _saleService.Report(startDate, endDate);
             }
             catch (Exception ex)
             {
-                rsp.status = false;
-                rsp.message = ex.Message;
+                rsp.Status = false;
+                rsp.ErrorMessage = ex.Message;
             }
             return Ok(rsp);
         }

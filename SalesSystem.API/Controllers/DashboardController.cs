@@ -24,13 +24,13 @@ namespace SalesSystem.API.Controllers
             var rsp = new Response<DashboardDTO>();
             try
             {
-                rsp.status = true;
-                rsp.value = await _dashboardService.Resume();
+                rsp.Status = true;
+                rsp.Value = await _dashboardService.Resume();
             }
             catch (Exception ex)
             {
-                rsp.status = false;
-                rsp.message = ex.Message;
+                rsp.Status = false;
+                rsp.ErrorMessage = ex.Message;
             }
             return Ok(rsp);
         }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SalesSystem.BLL.Services.Interfaces;
 using SalesSystem.DAL.Repositories.Interfaces;
 using SalesSystem.DTO;
@@ -21,8 +22,8 @@ namespace SalesSystem.BLL.Services
         {
             try
             {
-                var categories = await _categoryRepository.GetAll();
-                return _mapper.Map<List<CategoryDTO>>(categories.ToList());
+                var categories =  _categoryRepository.GetAll();
+                return _mapper.Map<List<CategoryDTO>>(await categories.ToListAsync());
             }
             catch (Exception)
             {

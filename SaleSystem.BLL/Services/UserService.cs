@@ -24,8 +24,8 @@ namespace SalesSystem.BLL.Services
         {
             try
             {
-                var userQuery = await _userRepository.GetAll();
-                var users = userQuery.Include(rol => rol.IdRolNavigation).ToList();
+                var userQuery =  _userRepository.GetAll();
+                var users = await userQuery.Include(rol => rol.IdRolNavigation).ToListAsync();
                 return _mapper.Map<List<UserDTO>>(users);
             }
             catch (Exception)
@@ -43,8 +43,8 @@ namespace SalesSystem.BLL.Services
                 {
                     throw new TaskCanceledException("The user does not exist.");
                 }
-                var query = await _userRepository.GetAll(u => u.IdUser == userCreated.IdUser);
-                userCreated = query.Include(rol => rol.IdRolNavigation).First();
+                var query =  _userRepository.GetAll(u => u.IdUser == userCreated.IdUser);
+                userCreated = await query.Include(rol => rol.IdRolNavigation).FirstAsync();
                 return _mapper.Map<UserDTO>(userCreated);
             }
             catch (Exception)
@@ -113,13 +113,15 @@ namespace SalesSystem.BLL.Services
         {
             try
             {
-                var userQuery = await _userRepository.GetAll(u => u.Email == email && u.Password == password);
+                var userQuery =  _userRepository.GetAll(u => u.Email == email && u.Password == password);
 
-                if (!userQuery.Any())
+                User user = await userQuery.Include(rol => rol.IdRolNavigation).FirstAsync();
+
+                if (user == null)
                 {
                     throw new TaskCanceledException("The user does not exist.");
                 }
-                User user = userQuery.Include(rol => rol.IdRolNavigation).First();
+
                 return _mapper.Map<SessionDTO>(user);
             }
             catch (Exception)

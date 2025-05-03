@@ -24,13 +24,13 @@ namespace SalesSystem.API.Controllers
             var rsp = new Response<List<RolDTO>>();
             try
             {
-                rsp.status = true;
-                rsp.value = await _rolService.GetAll();
+                rsp.Status = true;
+                rsp.Value = await _rolService.GetAll();
             }
             catch (Exception ex)
             {
-                rsp.status = false;
-                rsp.message = ex.Message;
+                rsp.Status = false;
+                rsp.ErrorMessage = ex.Message;
             }
             return Ok(rsp);
         }

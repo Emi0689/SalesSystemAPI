@@ -25,13 +25,13 @@ namespace SalesSystem.API.Controllers
             var rsp = new Response<List<UserDTO>>();
             try
             {
-                rsp.status = true;
-                rsp.value = await _userService.GetAll();
+                rsp.Status = true;
+                rsp.Value = await _userService.GetAll();
             }
             catch (Exception ex)
             {
-                rsp.status = false;
-                rsp.message = ex.Message;
+                rsp.Status = false;
+                rsp.ErrorMessage = ex.Message;
             }
             return Ok(rsp);
         }
@@ -44,13 +44,13 @@ namespace SalesSystem.API.Controllers
             var rsp = new Response<SessionDTO>();
             try
             {
-                rsp.status = true;
-                rsp.value = await _userService.ValidateCredentials(loginDTO.Email, loginDTO.Password);
+                rsp.Status = true;
+                rsp.Value = await _userService.ValidateCredentials(loginDTO.Email, loginDTO.Password);
             }
             catch (Exception ex)
             {
-                rsp.status = false;
-                rsp.message = ex.Message;
+                rsp.Status = false;
+                rsp.ErrorMessage = ex.Message;
             }
             return Ok(rsp);
         }
@@ -65,13 +65,13 @@ namespace SalesSystem.API.Controllers
                 if (userDTO.IdRol != Constants.rolAdmin)
                     throw new Exception("Nop!");
 
-                rsp.status = true;
-                rsp.value = await _userService.Create(userDTO);
+                rsp.Status = true;
+                rsp.Value = await _userService.Create(userDTO);
             }
             catch (Exception ex)
             {
-                rsp.status = false;
-                rsp.message = ex.Message;
+                rsp.Status = false;
+                rsp.ErrorMessage = ex.Message;
             }
             return Ok(rsp);
         }
@@ -86,13 +86,13 @@ namespace SalesSystem.API.Controllers
                 if (userDTO.IdRol != Constants.rolAdmin)
                     throw new Exception("Nop!");
 
-                rsp.status = true;
-                rsp.value = await _userService.Update(userDTO);
+                rsp.Status = true;
+                rsp.Value = await _userService.Update(userDTO);
             }
             catch (Exception ex)
             {
-                rsp.status = false;
-                rsp.message = ex.Message;
+                rsp.Status = false;
+                rsp.ErrorMessage = ex.Message;
             }
             return Ok(rsp);
         }
@@ -104,13 +104,13 @@ namespace SalesSystem.API.Controllers
             var rsp = new Response<bool>();
             try
             {
-                rsp.status = true;
-                rsp.value = await _userService.Delete(id);
+                rsp.Status = true;
+                rsp.Value = await _userService.Delete(id);
             }
             catch (Exception ex)
             {
-                rsp.status = false;
-                rsp.message = ex.Message;
+                rsp.Status = false;
+                rsp.ErrorMessage = ex.Message;
             }
             return Ok(rsp);
         }

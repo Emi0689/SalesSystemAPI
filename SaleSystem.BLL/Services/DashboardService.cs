@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SalesSystem.BLL.Services.Interfaces;
 using SalesSystem.DAL.Repositories.Interfaces;
 using SalesSystem.DTO;
@@ -31,7 +32,7 @@ namespace SalesSystem.BLL.Services
 
                 List<WeekSaleDTO> weekSaleDTOs = new List<WeekSaleDTO>();
 
-                foreach(KeyValuePair<string, int> item in await SaleLastWeek())
+                foreach(KeyValuePair<string, int> item in SaleLastWeek())
                 {
                     weekSaleDTOs.Add(new WeekSaleDTO()
                     {
@@ -60,12 +61,12 @@ namespace SalesSystem.BLL.Services
         private async Task<int> SalesTotalLastWeek()
         {
             int total = 0;
-            IQueryable<Sale> _saleQuery = await _saleRepository.GetAll();
+            IQueryable<Sale> _saleQuery = _saleRepository.GetAll();
 
             if(_saleQuery.Count() > 0)
             {
                 var saleTable = SalesReturn(_saleQuery, -7);
-                total = saleTable.Count();
+                total = await saleTable.CountAsync();
             }
             return total;
         }
@@ -73,31 +74,31 @@ namespace SalesSystem.BLL.Services
         private async Task<string> RevenuesTotalWeek()
         {
             decimal total = 0;
-            IQueryable<Sale> _saleQuery = await _saleRepository.GetAll();
+            IQueryable<Sale> _saleQuery = _saleRepository.GetAll();
 
-            if (_saleQuery.Count() > 0)
+            if (_saleQuery.Any())
             {
                 var saleTable = SalesReturn(_saleQuery, -7);
-                total = saleTable.Select(s => s.Total).Sum(v => v.Value);
+                total = await saleTable.Select(s => s.Total).SumAsync(v => v.Value);
             }
             return Convert.ToString(total, new CultureInfo("en-US"));
         }
 
         private async Task<int> ProductTotal()
         {
-            IQueryable<Product> _queryProduct = await _productRepository.GetAll();
-            int total = _queryProduct.Count();
+            IQueryable<Product> _queryProduct = _productRepository.GetAll();
+            int total = await _queryProduct.CountAsync();
 
             return total;
         }
 
-        private async Task<Dictionary<string, int>> SaleLastWeek()
-        { 
+        private Dictionary<string, int> SaleLastWeek()
+        {
             Dictionary<string, int> result = new Dictionary<string, int>();
 
-            IQueryable<Sale> _querySale = await _saleRepository.GetAll();
+            IQueryable<Sale> _querySale = _saleRepository.GetAll();
 
-            if (_querySale.Count() > 0)
+            if (_querySale.Any())
             {
                 var saleTable = SalesReturn(_querySale, -7);
                 result = saleTable.GroupBy(s => s.Timestamp.Value.Date).OrderBy(x => x.Key)
