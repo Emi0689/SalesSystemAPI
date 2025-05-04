@@ -28,7 +28,7 @@ namespace SalesSystem.BLL.Services
         {
             try
             {
-                var saleCreated = await _saleRepository.CreateAsync(_mapper.Map<Sale>(SaleDTO));
+                var saleCreated = await _saleRepository.CreateSaleAsync(_mapper.Map<Sale>(SaleDTO));
                 if (saleCreated.IdSale == 0)
                 {
                     throw new TaskCanceledException("The Sale could not be created.");

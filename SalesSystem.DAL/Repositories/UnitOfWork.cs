@@ -25,6 +25,8 @@ namespace SalesSystem.DAL.Repositories
         private ISaleRepository? _saleRepository;
         private readonly Dictionary<Type, object> _typedGenericRepository = [];
 
+        private IDbContextTransaction? _currentTransaction;
+
         public UnitOfWork(DbsaleContext db)
         {
             _dbContext = db;
@@ -47,17 +49,37 @@ namespace SalesSystem.DAL.Repositories
 
         public void Update(object entity) => _dbContext.Update(entity);
 
-        public DbSet<TModel> GetDbSet<TModel>() where TModel : class => _dbContext.Set<TModel>(); 
+        public DbSet<TModel> GetDbSet<TModel>() where TModel : class => _dbContext.Set<TModel>();
 
         public Task<int> CommitAsync() => _dbContext.SaveChangesAsync();
 
         public ValueTask<EntityEntry> AddAsync(object model) => _dbContext.AddAsync(model);
 
-        public IDbContextTransaction BeginTransaction() => _dbContext.Database.BeginTransaction();
+        public IDbContextTransaction BeginTransaction()
+        {
+            _currentTransaction = _dbContext.Database.BeginTransaction();
+            return _currentTransaction;
+        }
 
-        public void CommitTransaction() => _dbContext.Database.CommitTransaction();
+        public void CommitTransaction()
+        {
+            if (_currentTransaction == null)
+                throw new InvalidOperationException("No active transaction to commit.");
 
-        public void RollbackTransaction() => _dbContext.Database.RollbackTransaction();
+            _currentTransaction.Commit();
+            _currentTransaction.Dispose();
+            _currentTransaction = null;
+        }
+
+        public void RollbackTransaction()
+        {
+            if (_currentTransaction != null)
+            {
+                _currentTransaction.Rollback();
+                _currentTransaction.Dispose();
+                _currentTransaction = null;
+            }
+        }
 
         private bool _disposed = false;
 
@@ -67,11 +89,13 @@ namespace SalesSystem.DAL.Repositories
             {
                 if (disposing)
                 {
+                    _currentTransaction?.Dispose();
                     _dbContext.Dispose();
                 }
+                _disposed = true;
             }
-            _disposed = true;
         }
+
         public void Dispose()
         {
             Dispose(true);

@@ -20,41 +20,39 @@ namespace SalesSystem.DAL.Repositories
 
             try
             {
-
-                ///////////remove product from stock/////////
+                // 1. Stock
                 foreach (SaleDetails sl in sale.SaleDetails)
                 {
-                    var product_found = await _unitOfWork.GetGenRepo<Product>().GetAsync(p => p.IdProduct == sl.IdProduct);
-                    if (product_found != null)
-                    {
-                        product_found.Stock = product_found.Stock - sl.Amount;
-                        _unitOfWork.Update(product_found);
-                    }
-                    else
-                    {
-                        throw new Exception($"The product number: {sl.IdProduct} could not be found.");
-                    }
-                }
-                await _unitOfWork.CommitAsync();
-                /////////////////////////////////////////////
+                    var product_found = await _unitOfWork
+                        .GetGenRepo<Product>()
+                        .GetAsync(p => p.IdProduct == sl.IdProduct);
 
-                ///////////new ID value/////////
-                var idnumberNext = await _unitOfWork.GetGenRepo<IdNumber>().GetAsync();
-                if(idnumberNext != null)
+                    if (product_found is null)
+                        throw new Exception($"The product number: {sl.IdProduct} could not be found.");
+
+                    product_found.Stock -= sl.Amount;
+                    _unitOfWork.Update(product_found);
+                }
+
+                await _unitOfWork.CommitAsync();
+
+                // 2. New sale number
+                var idnumberNext = await _unitOfWork
+                    .GetGenRepo<IdNumber>()
+                    .GetAsync();
+
+                if (idnumberNext is not null)
                 {
-                    idnumberNext.LastNumber = idnumberNext.LastNumber + 1;
+                    idnumberNext.LastNumber += 1;
                     idnumberNext.Timestamp = DateTime.Now;
                 }
 
                 await _unitOfWork.CommitAsync();
-                /////////////////////////////////////////////
 
-
+                // 3. Get Sale ID
                 int numberOfDigits = 4; //00001
-                string zeros = string.Concat(Enumerable.Repeat("0", numberOfDigits));
-                string iDSaleNumber = zeros + idnumberNext.LastNumber.ToString();
-
-                iDSaleNumber = iDSaleNumber.Substring(iDSaleNumber.Length - numberOfDigits, numberOfDigits);
+                string iDSaleNumber = (new string('0', numberOfDigits) + idnumberNext.LastNumber)
+                                      .Substring(idnumberNext.LastNumber.ToString().Length);
 
                 sale.IdNumber = iDSaleNumber;
 
@@ -64,14 +62,13 @@ namespace SalesSystem.DAL.Repositories
                 saleGenerated = sale;
 
                 _unitOfWork.CommitTransaction();
-
             }
             catch
             {
                 _unitOfWork.RollbackTransaction();
                 throw;
             }
-            
+
             return saleGenerated;
         }
     }
