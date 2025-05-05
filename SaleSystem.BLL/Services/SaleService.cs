@@ -24,11 +24,11 @@ namespace SalesSystem.BLL.Services
             this._saleRepository = _unitOfWork.SaleRepository;
         }
 
-        public async Task<SaleDTO> CreateAsync(SaleDTO SaleDTO)
+        public async Task<SaleDTO> Create(SaleDTO SaleDTO)
         {
             try
             {
-                var saleCreated = await _saleRepository.CreateSaleAsync(_mapper.Map<Sale>(SaleDTO));
+                var saleCreated = await _saleRepository.CreateAsync(_mapper.Map<Sale>(SaleDTO));
                 if (saleCreated.IdSale == 0)
                 {
                     throw new TaskCanceledException("The Sale could not be created.");
@@ -41,9 +41,9 @@ namespace SalesSystem.BLL.Services
             }
         }
 
-        public async Task<List<SaleDTO>> HistoryAsync(string searchFor, string saleNumber, string startDate, string endDate)
+        public async Task<List<SaleDTO>> History(string searchFor, string saleNumber, string startDate, string endDate)
         {
-            IQueryable<Sale> query = _saleRepository.GetAllAsync();
+            IQueryable<Sale> query = _saleRepository.GetQuery();
 
             var sales = new List<Sale>();
 
@@ -78,9 +78,9 @@ namespace SalesSystem.BLL.Services
             }
         }
 
-        public async Task<List<ReportDTO>> GetReportAsync(string startDate, string endDate)
+        public async Task<List<ReportDTO>> Report(string startDate, string endDate)
         {
-            IQueryable<SaleDetails> query = _productGenSaleDetails.GetAllAsync();
+            IQueryable<SaleDetails> query = _productGenSaleDetails.GetQuery();
             var salesDetail = new List<SaleDetails>();
 
             try

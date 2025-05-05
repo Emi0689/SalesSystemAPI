@@ -24,7 +24,7 @@ namespace SalesSystem.API.Controllers
             try
             {
                 rsp.Status = true;
-                rsp.Value = await _dashboardService.GetResumeAsync();
+                rsp.Value = await _dashboardService.Resume();
             }
             catch (Exception ex)
             {

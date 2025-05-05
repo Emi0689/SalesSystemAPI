@@ -25,7 +25,7 @@ namespace SalesSystem.DAL.Repositories
                 {
                     var product_found = await _unitOfWork
                         .GetGenRepo<Product>()
-                        .GetAsync(p => p.IdProduct == sl.IdProduct);
+                        .GetSingleAsync(p => p.IdProduct == sl.IdProduct);
 
                     if (product_found is null)
                         throw new Exception($"The product number: {sl.IdProduct} could not be found.");
@@ -39,7 +39,7 @@ namespace SalesSystem.DAL.Repositories
                 // 2. New sale number
                 var idnumberNext = await _unitOfWork
                     .GetGenRepo<IdNumber>()
-                    .GetAsync();
+                    .GetSingleAsync();
 
                 if (idnumberNext is not null)
                 {

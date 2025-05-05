@@ -1,13 +1,14 @@
 ﻿using SalesSystem.DAL.Repositories.Interfaces;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace SalesSystem.DAL.Repositories
 {
     public class GenericRepository<TModel> : IGenericRepository<TModel> where TModel : class
     {
         private readonly IUnitOfWork _unitOfWork;
-        private DbSet<TModel> dbSet;
+        private readonly DbSet<TModel> dbSet;
                     
         public GenericRepository(IUnitOfWork unitOfWork)
         {
@@ -15,15 +16,14 @@ namespace SalesSystem.DAL.Repositories
             dbSet = unitOfWork.GetDbSet<TModel>();
         }
 
-        public async Task<TModel?> GetAsync(Expression<Func<TModel, bool>>? filter = null)
+        public async Task<TModel?> GetSingleAsync(
+                                    Expression<Func<TModel, bool>>? whereCondition = null,
+                                    List<Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>>>? includes = null,
+                                    bool asNoTracking = false)
         {
             try
             {
-
-                TModel? model = filter == null ? await dbSet.FirstOrDefaultAsync() : 
-                                                 await dbSet.Where(filter).FirstOrDefaultAsync();
-
-                return model;
+                return await GetQuery(whereCondition, includes, null, asNoTracking, null, null).FirstOrDefaultAsync();
             }
             catch
             {
@@ -31,9 +31,35 @@ namespace SalesSystem.DAL.Repositories
             }
         }
 
-        public async Task<IEnumerable<TModel>> GetAsync(Expression<Func<TModel, bool>> whereCondition = null,
-                          Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderBy = null,
-                          string includeProperties = "")
+        public async Task<int> GetCountAsync(
+                    Expression<Func<TModel, bool>>? whereCondition = null,
+                    List<Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>>>? includes = null,
+                    Func<IQueryable<TModel>, IOrderedQueryable<TModel>>? orderBy = null,
+                    bool asNoTracking = false,
+                    int? skip = null,
+                    int? take = null)
+        {
+            return await GetQuery(whereCondition, includes, orderBy, asNoTracking, skip, take).CountAsync();
+        }
+
+        public async Task<List<TModel>> GetAllAsync(
+                            Expression<Func<TModel, bool>>? whereCondition = null,
+                            List<Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>>>? includes = null,
+                            Func<IQueryable<TModel>, IOrderedQueryable<TModel>>? orderBy = null,
+                            bool asNoTracking = false,
+                            int? skip = null,
+                            int? take = null)
+        {
+            return await GetQuery(whereCondition, includes, orderBy, asNoTracking, skip, take).ToListAsync();
+        }
+
+        public IQueryable<TModel> GetQuery(
+                            Expression<Func<TModel, bool>>? whereCondition = null,
+                            List<Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>>>? includes = null,
+                            Func<IQueryable<TModel>, IOrderedQueryable<TModel>>? orderBy = null,
+                            bool asNoTracking = false, 
+                            int? skip = null, 
+                            int? take = null)
         {
             IQueryable<TModel> query = dbSet;
 
@@ -42,34 +68,35 @@ namespace SalesSystem.DAL.Repositories
                 query = query.Where(whereCondition);
             }
 
-            foreach (var includeProperty in includeProperties.Split
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            if (includes != null)
             {
-                query = query.Include(includeProperty);
+                foreach (var include in includes)
+                {
+                    query = include(query);
+                }
             }
 
             if (orderBy != null)
             {
-                return await orderBy(query).ToListAsync();
+                orderBy(query);
             }
-            else
-            {
-                return await query.ToListAsync();
-            }
-        }
 
-        public IQueryable<TModel> GetAllAsync(Expression<Func<TModel, bool>>? filter = null)
-        {
-            try
-            { 
-                IQueryable<TModel> queryModel = filter == null ? dbSet :
-                                                                 dbSet.Where(filter);
-                return queryModel;
-            }
-            catch
+            if (skip != null && skip.HasValue)
             {
-                throw;
+                query = query.Skip(skip.Value);
             }
+
+            if (take != null && take.HasValue)
+            {
+                query = query.Take(take.Value);
+            }
+
+            if (asNoTracking)
+            {
+                query.AsNoTracking();
+            }
+
+            return query;
         }
 
         public async Task<TModel> CreateAsync(TModel model)
@@ -119,5 +146,7 @@ namespace SalesSystem.DAL.Repositories
                 throw;
             }
         }
+
+
     }
 }

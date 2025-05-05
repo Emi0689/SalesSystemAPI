@@ -4,6 +4,6 @@ namespace SalesSystem.BLL.Services.Interfaces
 {
     public interface IDashboardService
     {
-        Task<DashboardDTO> GetResumeAsync();
+        Task<DashboardDTO> Resume();
     }
 }

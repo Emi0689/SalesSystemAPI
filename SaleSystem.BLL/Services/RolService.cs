@@ -21,12 +21,11 @@ namespace SalesSystem.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<List<RolDTO>> GetAllAsync()
+        public async Task<List<RolDTO>> GetAll()
         {
             try
             {
-                var rols = _rolGenRepo.GetAllAsync();
-                return _mapper.Map<List<RolDTO>>(await rols.ToListAsync());
+                return _mapper.Map<List<RolDTO>>(await _rolGenRepo.GetAllAsync());
             }
             catch (Exception)
             {

@@ -25,8 +25,7 @@ namespace SalesSystem.BLL.Services
         {
             try
             {
-                var categories =  _categoryGenRepo.GetAllAsync();
-                return _mapper.Map<List<CategoryDTO>>(await categories.ToListAsync());
+                return _mapper.Map<List<CategoryDTO>>(await _categoryGenRepo.GetAllAsync());
             }
             catch (Exception)
             {

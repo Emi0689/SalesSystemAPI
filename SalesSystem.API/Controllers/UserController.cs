@@ -4,7 +4,6 @@ using SalesSystem.DTO;
 using SalesSystem.BLL.Services.Interfaces;
 using SalesSystem.Utility;
 
-
 namespace SalesSystem.API.Controllers
 {
     [Route("api/[controller]")]

@@ -21,7 +21,7 @@ namespace SalesSystem.BLL.Services
             _productGenRepo = _unitOfWork.GetGenRepo<Product>();
         }
 
-        public async Task<DashboardDTO> GetResumeAsync()
+        public async Task<DashboardDTO> Resume()
         {
             DashboardDTO vmDashboard = new DashboardDTO();
             try
@@ -61,7 +61,7 @@ namespace SalesSystem.BLL.Services
         private async Task<int> SalesTotalLastWeek()
         {
             int total = 0;
-            IQueryable<Sale> _saleQuery = _saleRepository.GetAllAsync();
+            IQueryable<Sale> _saleQuery = _saleRepository.GetQuery();
 
             if(_saleQuery.Count() > 0)
             {
@@ -74,7 +74,7 @@ namespace SalesSystem.BLL.Services
         private async Task<string> RevenuesTotalWeek()
         {
             decimal total = 0;
-            IQueryable<Sale> _saleQuery = _saleRepository.GetAllAsync();
+            IQueryable<Sale> _saleQuery = _saleRepository.GetQuery();
 
             if (_saleQuery.Any())
             {
@@ -86,17 +86,14 @@ namespace SalesSystem.BLL.Services
 
         private async Task<int> ProductTotal()
         {
-            IQueryable<Product> _queryProduct = _productGenRepo.GetAllAsync();
-            int total = await _queryProduct.CountAsync();
-
-            return total;
+            return await _productGenRepo.GetCountAsync();
         }
 
         private Dictionary<string, int> SaleLastWeek()
         {
             Dictionary<string, int> result = new Dictionary<string, int>();
 
-            IQueryable<Sale> _querySale = _saleRepository.GetAllAsync();
+            IQueryable<Sale> _querySale = _saleRepository.GetQuery();
 
             if (_querySale.Any())
             {

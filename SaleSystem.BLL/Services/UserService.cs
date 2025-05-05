@@ -23,8 +23,7 @@ namespace SalesSystem.BLL.Services
         {
             try
             {
-                var userQuery =  _userRepository.GetAllAsync();
-                var users = await userQuery.Include(rol => rol.IdRolNavigation).ToListAsync();
+                var users = await _userRepository.GetAllAsync(includes: [user => user.Include(rol => rol.IdRolNavigation)]);
                 return _mapper.Map<List<UserDTO>>(users);
             }
             catch (Exception)
@@ -42,8 +41,8 @@ namespace SalesSystem.BLL.Services
                 {
                     throw new TaskCanceledException("The user does not exist.");
                 }
-                var query =  _userRepository.GetAllAsync(u => u.IdUser == userCreated.IdUser);
-                userCreated = await query.Include(rol => rol.IdRolNavigation).FirstAsync();
+                userCreated = await _userRepository.GetSingleAsync(u => u.IdUser == userCreated.IdUser,
+                                                                  [user => user.Include(rol => rol.IdRolNavigation)]);
                 return _mapper.Map<UserDTO>(userCreated);
             }
             catch (Exception)
@@ -56,7 +55,7 @@ namespace SalesSystem.BLL.Services
         {
             try
             {
-                var userFound = await _userRepository.GetAsync(u => u.IdUser == id);
+                var userFound = await _userRepository.GetSingleAsync(u => u.IdUser == id);
 
                 if (userFound?.IdRol != Constants.rolAdmin)
                     throw new Exception("Nop!");
@@ -83,7 +82,7 @@ namespace SalesSystem.BLL.Services
             try
             {
                 var user = _mapper.Map<User>(userDTO);
-                var userFound = await _userRepository.GetAsync(u => u.IdUser == userDTO.IdUser);
+                var userFound = await _userRepository.GetSingleAsync(u => u.IdUser == userDTO.IdUser);
                 if (userFound?.IdUser == 0)
                 {
                     throw new TaskCanceledException("The user does not exist.");
@@ -112,9 +111,9 @@ namespace SalesSystem.BLL.Services
         {
             try
             {
-                var userQuery =  _userRepository.GetAllAsync(u => u.Email == email && u.Password == password);
+                var user = await _userRepository.GetSingleAsync(u => u.Email == email && u.Password == password,
+                    [user => user.Include(rol => rol.IdRolNavigation)]);
 
-                User user = await userQuery.Include(rol => rol.IdRolNavigation).FirstAsync();
 
                 if (user == null)
                 {

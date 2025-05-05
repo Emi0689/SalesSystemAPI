@@ -25,10 +25,8 @@ namespace SalesSystem.BLL.Services
         {
             try
             {
-                var productQuery = _productGenRepo.GetAllAsync();
-                var productQueryWithRol = productQuery.Include(rol => rol.IdCategoryNavigation);
-                var products = await productQueryWithRol.ToListAsync();
-                return _mapper.Map<List<ProductDTO>>(products);
+                var productQueryWithRol = await _productGenRepo.GetAllAsync(includes: [prod => prod.Include(cat => cat.IdCategoryNavigation)]);
+                return _mapper.Map<List<ProductDTO>>(productQueryWithRol);
             }
             catch (Exception)
             {
@@ -46,8 +44,10 @@ namespace SalesSystem.BLL.Services
                 {
                     throw new TaskCanceledException("The product does not exist.");
                 }
-                var query = _productGenRepo.GetAllAsync(u => u.IdProduct == productCreated.IdProduct);
-                productCreated = await query.Include(rol => rol.IdCategoryNavigation).FirstAsync();
+                productCreated = await _productGenRepo.GetSingleAsync(
+                                                        u => u.IdProduct == productCreated.IdProduct,
+                                                        [prod => prod.Include(cat => cat.IdCategoryNavigation)]);
+
                 return _mapper.Map<ProductDTO>(productCreated);
             }
             catch (Exception)
@@ -61,17 +61,19 @@ namespace SalesSystem.BLL.Services
             try
             {
                 var product = _mapper.Map<Product>(ProductDTO);
-                var productFound = await _productGenRepo.GetAsync(u => u.IdProduct == ProductDTO.IdProduct);
-                if (productFound?.IdProduct == 0)
+                var productFound = await _productGenRepo.GetSingleAsync(u => u.IdProduct == ProductDTO.IdProduct);
+                if (productFound == null || productFound?.IdProduct == 0)
                 {
                     throw new TaskCanceledException("The Product does not exist.");
                 }
-                productFound.Price = product.Price;
-                productFound.Stock = product.Stock;
-                productFound.IdCategory = product.IdCategory;
-                productFound.IsActive = product.IsActive;
-                productFound.Name = product.Name;
-
+                else
+                { 
+                    productFound.Price = product.Price;
+                    productFound.Stock = product.Stock;
+                    productFound.IdCategory = product.IdCategory;
+                    productFound.IsActive = product.IsActive;
+                    productFound.Name = product.Name;
+                }
                 bool result = await _productGenRepo.UpdateAsync(productFound);
 
                 if (!result)
@@ -90,11 +92,12 @@ namespace SalesSystem.BLL.Services
         {
             try
             {
-                var productFound = await _productGenRepo.GetAsync(u => u.IdProduct == id);
-                if (productFound.IdProduct == 0)
+                var productFound = await _productGenRepo.GetSingleAsync(u => u.IdProduct == id);
+                if (productFound == null || productFound?.IdProduct == 0)
                 {
                     throw new TaskCanceledException("The product does not exist.");
                 }
+
                 bool result = await _productGenRepo.DeleteAsync(productFound);
                 if (!result)
                 {
