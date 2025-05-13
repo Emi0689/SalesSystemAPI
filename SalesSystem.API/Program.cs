@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Localization;
+using SalesSystem.API.Common;
 using SalesSystem.IOC;
 using System.Globalization;
 
@@ -26,10 +27,37 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
 });
-//////////////////
+
+//////////////////////////////////////////////////////
+/////////////////////FILTERS/////////////////////////
+//////////////////////////////////////////////////////
+
+///Global Filters (for all-controllers)
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<HttpResponseExceptionFilter>();
+});
+
+///Filter by Controller-tags
+
+//Autorizations
+//builder.Services.AddScoped<CustomAuthorizationFilter>();
+///////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
 
 
-builder.Services.AddCors(op => { op.AddPolicy("Policy", app => app.AllowAnyHeader().AllowAnyOrigin().AllowAnyOrigin().AllowAnyMethod()); });
+///////////////CORS///////////////////
+builder.Services.AddCors(op => 
+{ 
+    op.AddPolicy("Policy", app =>
+    app.AllowAnyOrigin()
+    //app.WithOrigins("http://localhost:3000")
+    .AllowCredentials() //for JWT or Cookies
+    .AllowAnyHeader()
+    .AllowAnyMethod()); 
+});
+/////////////////
 
 var app = builder.Build();
 
@@ -37,6 +65,9 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseCors("Policy");
+
+///Middleware
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

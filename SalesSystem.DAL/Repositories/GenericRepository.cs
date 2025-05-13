@@ -18,22 +18,18 @@ namespace SalesSystem.DAL.Repositories
 
         public async Task<TModel?> GetSingleAsync(
                                     Expression<Func<TModel, bool>>? whereCondition = null,
-                                    List<Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>>>? includes = null,
+                                    List<Func<IQueryable<TModel>, 
+                                    IIncludableQueryable<TModel, object>>>? includes = null,
                                     bool asNoTracking = false)
         {
-            try
-            {
-                return await GetQuery(whereCondition, includes, null, asNoTracking, null, null).FirstOrDefaultAsync();
-            }
-            catch
-            {
-                throw;
-            }
+
+            return await GetQuery(whereCondition, includes, null, asNoTracking, null, null).FirstOrDefaultAsync();
         }
 
         public async Task<int> GetCountAsync(
                     Expression<Func<TModel, bool>>? whereCondition = null,
-                    List<Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>>>? includes = null,
+                    List<Func<IQueryable<TModel>, 
+                    IIncludableQueryable<TModel, object>>>? includes = null,
                     Func<IQueryable<TModel>, IOrderedQueryable<TModel>>? orderBy = null,
                     bool asNoTracking = false,
                     int? skip = null,
@@ -44,7 +40,8 @@ namespace SalesSystem.DAL.Repositories
 
         public async Task<List<TModel>> GetAllAsync(
                             Expression<Func<TModel, bool>>? whereCondition = null,
-                            List<Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>>>? includes = null,
+                            List<Func<IQueryable<TModel>, 
+                            IIncludableQueryable<TModel, object>>>? includes = null,
                             Func<IQueryable<TModel>, IOrderedQueryable<TModel>>? orderBy = null,
                             bool asNoTracking = false,
                             int? skip = null,
@@ -55,7 +52,8 @@ namespace SalesSystem.DAL.Repositories
 
         public IQueryable<TModel> GetQuery(
                             Expression<Func<TModel, bool>>? whereCondition = null,
-                            List<Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>>>? includes = null,
+                            List<Func<IQueryable<TModel>, 
+                            IIncludableQueryable<TModel, object>>>? includes = null,
                             Func<IQueryable<TModel>, IOrderedQueryable<TModel>>? orderBy = null,
                             bool asNoTracking = false, 
                             int? skip = null, 
@@ -101,52 +99,29 @@ namespace SalesSystem.DAL.Repositories
 
         public async Task<TModel> CreateAsync(TModel model)
         {
-            try
-            {
-                dbSet.Add(model);
-                await _unitOfWork.CommitAsync();
-                return model;
-            }
-            catch
-            {
-                throw;
-            }
+            dbSet.Add(model);
+            await _unitOfWork.CommitAsync();
+            return model;
         }
 
         public async Task<bool> UpdateAsync(TModel model)
         {
-            try
-            {
-                dbSet.Update(model);
-                var result = await _unitOfWork.CommitAsync(); ;
-                if (result > 0)
-                    return true;
-                else 
-                    return false;
-            }
-            catch
-            {
-                throw;
-            }
+            dbSet.Update(model);
+            var result = await _unitOfWork.CommitAsync(); ;
+            if (result > 0)
+                return true;
+            else 
+                return false;
         }
 
         public async Task<bool> DeleteAsync(TModel model)
         {
-            try
-            {
-                dbSet.Remove(model);
-                var result = await _unitOfWork.CommitAsync();
-                if (result > 0)
-                    return true;
-                else
-                    return false;
-            }
-            catch
-            {
-                throw;
-            }
+            dbSet.Remove(model);
+            var result = await _unitOfWork.CommitAsync();
+            if (result > 0)
+                return true;
+            else
+                return false;
         }
-
-
     }
 }

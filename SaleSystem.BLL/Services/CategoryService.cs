@@ -23,14 +23,7 @@ namespace SalesSystem.BLL.Services
 
         public async Task<List<CategoryDTO>> GetAllAsync()
         {
-            try
-            {
-                return _mapper.Map<List<CategoryDTO>>(await _categoryGenRepo.GetAllAsync());
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return _mapper.Map<List<CategoryDTO>>(await _categoryGenRepo.GetAllAsync());
         }
     }
 }

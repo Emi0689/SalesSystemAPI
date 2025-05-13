@@ -23,92 +23,64 @@ namespace SalesSystem.BLL.Services
 
         public async Task<List<ProductDTO>> GetAllAsync()
         {
-            try
-            {
-                var productQueryWithRol = await _productGenRepo.GetAllAsync(includes: [prod => prod.Include(cat => cat.IdCategoryNavigation)]);
-                return _mapper.Map<List<ProductDTO>>(productQueryWithRol);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var productQueryWithRol = await _productGenRepo.GetAllAsync(includes: [prod => prod.Include(cat => cat.IdCategoryNavigation)]);
+            return _mapper.Map<List<ProductDTO>>(productQueryWithRol);
         }
 
 
         public async Task<ProductDTO> CreateAsync(ProductDTO ProductDTO)
         {
-            try
+            var productCreated = await _productGenRepo.CreateAsync(_mapper.Map<Product>(ProductDTO));
+            if (productCreated.IdProduct == 0)
             {
-                var productCreated = await _productGenRepo.CreateAsync(_mapper.Map<Product>(ProductDTO));
-                if (productCreated.IdProduct == 0)
-                {
-                    throw new TaskCanceledException("The product does not exist.");
-                }
-                productCreated = await _productGenRepo.GetSingleAsync(
-                                                        u => u.IdProduct == productCreated.IdProduct,
-                                                        [prod => prod.Include(cat => cat.IdCategoryNavigation)]);
+                throw new TaskCanceledException("The product does not exist.");
+            }
+            productCreated = await _productGenRepo.GetSingleAsync(
+                                                    u => u.IdProduct == productCreated.IdProduct,
+                                                    [prod => prod.Include(cat => cat.IdCategoryNavigation)]);
 
-                return _mapper.Map<ProductDTO>(productCreated);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return _mapper.Map<ProductDTO>(productCreated);
         }
 
         public async Task<bool> UpdateAsync(ProductDTO ProductDTO)
         {
-            try
+            var product = _mapper.Map<Product>(ProductDTO);
+            var productFound = await _productGenRepo.GetSingleAsync(u => u.IdProduct == ProductDTO.IdProduct);
+            if (productFound == null || productFound?.IdProduct == 0)
             {
-                var product = _mapper.Map<Product>(ProductDTO);
-                var productFound = await _productGenRepo.GetSingleAsync(u => u.IdProduct == ProductDTO.IdProduct);
-                if (productFound == null || productFound?.IdProduct == 0)
-                {
-                    throw new TaskCanceledException("The Product does not exist.");
-                }
-                else
-                { 
-                    productFound.Price = product.Price;
-                    productFound.Stock = product.Stock;
-                    productFound.IdCategory = product.IdCategory;
-                    productFound.IsActive = product.IsActive;
-                    productFound.Name = product.Name;
-                }
-                bool result = await _productGenRepo.UpdateAsync(productFound);
+                throw new TaskCanceledException("The Product does not exist.");
+            }
+            else
+            { 
+                productFound.Price = product.Price;
+                productFound.Stock = product.Stock;
+                productFound.IdCategory = product.IdCategory;
+                productFound.IsActive = product.IsActive;
+                productFound.Name = product.Name;
+            }
+            bool result = await _productGenRepo.UpdateAsync(productFound);
 
-                if (!result)
-                {
-                    throw new TaskCanceledException("The product could not be updated.");
-                }
-                return result;
-            }
-            catch (Exception)
+            if (!result)
             {
-                throw;
+                throw new TaskCanceledException("The product could not be updated.");
             }
+            return result;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            try
+            var productFound = await _productGenRepo.GetSingleAsync(u => u.IdProduct == id);
+            if (productFound == null || productFound?.IdProduct == 0)
             {
-                var productFound = await _productGenRepo.GetSingleAsync(u => u.IdProduct == id);
-                if (productFound == null || productFound?.IdProduct == 0)
-                {
-                    throw new TaskCanceledException("The product does not exist.");
-                }
+                throw new TaskCanceledException("The product does not exist.");
+            }
 
-                bool result = await _productGenRepo.DeleteAsync(productFound);
-                if (!result)
-                {
-                    throw new TaskCanceledException("The product could not be updated.");
-                }
-                return result;
-            }
-            catch (Exception)
+            bool result = await _productGenRepo.DeleteAsync(productFound);
+            if (!result)
             {
-                throw;
+                throw new TaskCanceledException("The product could not be updated.");
             }
+            return result;
         }
     }
 }

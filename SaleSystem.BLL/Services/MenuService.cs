@@ -31,21 +31,13 @@ namespace SalesSystem.BLL.Services
             IQueryable<MenuRol> menuRols =  _menuRolGenRepo.GetQuery();
             IQueryable<Menu> menu =  _menuGenRepo.GetQuery();
 
-            try
-            {
-                IQueryable<Menu> menuResult = (from u in user 
-                                         join mr in menuRols on u.IdRol equals mr.IdRol
-                                         join m in menu on mr.IdMenu equals m.IdMenu
-                                         select m);
+            IQueryable<Menu> menuResult = (from u in user 
+                                        join mr in menuRols on u.IdRol equals mr.IdRol
+                                        join m in menu on mr.IdMenu equals m.IdMenu
+                                        select m);
 
-                var result = await menuResult.ToListAsync();
-                return _mapper.Map<List<MenuDTO>>(result);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
+            var result = await menuResult.ToListAsync();
+            return _mapper.Map<List<MenuDTO>>(result);
         }
     }
 }

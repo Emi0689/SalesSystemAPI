@@ -1,8 +1,7 @@
-﻿using SalesSystem.API.Utilities;
+﻿using SalesSystem.API.Common;
 using SalesSystem.DTO;
 using SalesSystem.BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using SalesSystem.BLL.Services;
 
 namespace SalesSystem.API.Controllers
 {
@@ -17,76 +16,71 @@ namespace SalesSystem.API.Controllers
             _productService = productService;
         }
 
+        /// <summary>
+        /// Retrieves all products.
+        /// </summary>
+        /// <returns>List of products.</returns>
         [HttpGet]
         [Route("GetAll")]
         public async Task<IActionResult> GetAll()
         {
-            var rsp = new Response<List<ProductDTO>>();
-            try
+            var products = await _productService.GetAllAsync();
+
+            return Ok(new Response<List<ProductDTO>>
             {
-                rsp.Status = true;
-                rsp.Value = await _productService.GetAllAsync();
-            }
-            catch (Exception ex)
-            {
-                rsp.Status = false;
-                rsp.ErrorMessage = ex.Message;
-            }
-            return Ok(rsp);
+                Success = true,
+                Value = products
+            });
         }
 
+        /// <summary>
+        /// Creates a new product.
+        /// </summary>
+        /// <param name="productDTO">Product data transfer object.</param>
+        /// <returns>201 Created with the created product.</returns>
         [HttpPost]
         [Route("Create")]
         public async Task<IActionResult> Create([FromBody] ProductDTO productDTO)
         {
-            var rsp = new Response<ProductDTO>();
-            try
+            var createdProduct = await _productService.CreateAsync(productDTO);
+
+            return Created(uri: Url.Action(nameof(Create), createdProduct.IdProduct), value: new Response<ProductDTO>
             {
-                rsp.Status = true;
-                rsp.Value = await _productService.CreateAsync(productDTO);
-            }
-            catch (Exception ex)
-            {
-                rsp.Status = false;
-                rsp.ErrorMessage = ex.Message;
-            }
-            return Ok(rsp);
+                Success = true,
+                Value = createdProduct
+            });
         }
 
+        /// <summary>
+        /// Updates an existing product.
+        /// </summary>
+        /// <param name="productDTO">Product data transfer object.</param>
+        /// <returns>204 No Content.</returns>
         [HttpPut]
         [Route("Update")]
         public async Task<IActionResult> Update([FromBody] ProductDTO productDTO)
         {
-            var rsp = new Response<bool>();
-            try
-            {
-                rsp.Status = true;
-                rsp.Value = await _productService.UpdateAsync(productDTO);
-            }
-            catch (Exception ex)
-            {
-                rsp.Status = false;
-                rsp.ErrorMessage = ex.Message;
-            }
-            return Ok(rsp);
+            await _productService.UpdateAsync(productDTO);
+
+            return NoContent();
         }
 
+        /// <summary>
+        /// Deletes a product by ID.
+        /// </summary>
+        /// <param name="productId">The ID of the product to delete.</param>
+        /// <returns>200 OK with a success response.</returns>
         [HttpDelete]
         [Route("Delete/{productId:int}")]
         public async Task<IActionResult> Delete(int productId)
         {
-            var rsp = new Response<bool>();
-            try
+            var result = await _productService.DeleteAsync(productId);
+
+            return Ok(new Response<bool>
             {
-                rsp.Status = true;
-                rsp.Value = await _productService.DeleteAsync(productId);
-            }
-            catch (Exception ex)
-            {
-                rsp.Status = false;
-                rsp.ErrorMessage = ex.Message;
-            }
-            return Ok(rsp);
+                Success = true,
+                Value = result
+            });
         }
     }
 }

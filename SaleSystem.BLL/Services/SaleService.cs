@@ -26,19 +26,12 @@ namespace SalesSystem.BLL.Services
 
         public async Task<SaleDTO> Create(SaleDTO SaleDTO)
         {
-            try
+            var saleCreated = await _saleRepository.CreateAsync(_mapper.Map<Sale>(SaleDTO));
+            if (saleCreated.IdSale == 0)
             {
-                var saleCreated = await _saleRepository.CreateAsync(_mapper.Map<Sale>(SaleDTO));
-                if (saleCreated.IdSale == 0)
-                {
-                    throw new TaskCanceledException("The Sale could not be created.");
-                }
-                return _mapper.Map<SaleDTO>(saleCreated);
+                throw new TaskCanceledException("The Sale could not be created.");
             }
-            catch (Exception)
-            {
-                throw;
-            }
+            return _mapper.Map<SaleDTO>(saleCreated);
         }
 
         public async Task<List<SaleDTO>> History(string searchFor, string saleNumber, string startDate, string endDate)
@@ -47,35 +40,28 @@ namespace SalesSystem.BLL.Services
 
             var sales = new List<Sale>();
 
-            try
+            if (searchFor == "date")
             {
-                if (searchFor == "date")
-                {
-                    DateTime start_Date = DateTime.ParseExact(startDate, "MM/dd/yyyy", new CultureInfo("en-US"));
-                    DateTime end_Date = DateTime.ParseExact(endDate, "MM/dd/yyyy", new CultureInfo("en-US"));
+                DateTime start_Date = DateTime.ParseExact(startDate, "MM/dd/yyyy", new CultureInfo("en-US"));
+                DateTime end_Date = DateTime.ParseExact(endDate, "MM/dd/yyyy", new CultureInfo("en-US"));
 
-                    sales = await query.Where(filter =>
-                                        filter.Timestamp.Value.Date >= start_Date &&
-                                        filter.Timestamp.Value.Date <= end_Date)
+                sales = await query.Where(filter =>
+                                    filter.Timestamp.Value.Date >= start_Date &&
+                                    filter.Timestamp.Value.Date <= end_Date)
+                    .Include(sd => sd.SaleDetails)
+                    .ThenInclude(p => p.IdProductNavigation)
+                    .ToListAsync();
+            }
+            else
+            {
+                sales = await query.Where(filter =>
+                                        filter.IdNumber == saleNumber)
                         .Include(sd => sd.SaleDetails)
                         .ThenInclude(p => p.IdProductNavigation)
                         .ToListAsync();
-                }
-                else
-                {
-                    sales = await query.Where(filter =>
-                                            filter.IdNumber == saleNumber)
-                            .Include(sd => sd.SaleDetails)
-                            .ThenInclude(p => p.IdProductNavigation)
-                            .ToListAsync();
-                }
+            }
 
-                return _mapper.Map<List<SaleDTO>>(sales);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return _mapper.Map<List<SaleDTO>>(sales);
         }
 
         public async Task<List<ReportDTO>> Report(string startDate, string endDate)
@@ -83,24 +69,17 @@ namespace SalesSystem.BLL.Services
             IQueryable<SaleDetails> query = _productGenSaleDetails.GetQuery();
             var salesDetail = new List<SaleDetails>();
 
-            try
-            {
-                DateTime start_Date = DateTime.ParseExact(startDate, "MM/dd/yyyy", new CultureInfo("en-US"));
-                DateTime end_Date = DateTime.ParseExact(endDate, "MM/dd/yyyy", new CultureInfo("en-US"));
+            DateTime start_Date = DateTime.ParseExact(startDate, "MM/dd/yyyy", new CultureInfo("en-US"));
+            DateTime end_Date = DateTime.ParseExact(endDate, "MM/dd/yyyy", new CultureInfo("en-US"));
 
-                salesDetail = await query
-                          .Include(sd => sd.IdProductNavigation)
-                          .Include(p => p.IdSaleNavigation)
-                          .Where(t => t.IdSaleNavigation.Timestamp.Value.Date >= start_Date
-                                       && t.IdSaleNavigation.Timestamp.Value.Date <= end_Date)
-                          .ToListAsync();
+            salesDetail = await query
+                        .Include(sd => sd.IdProductNavigation)
+                        .Include(p => p.IdSaleNavigation)
+                        .Where(t => t.IdSaleNavigation.Timestamp.Value.Date >= start_Date
+                                    && t.IdSaleNavigation.Timestamp.Value.Date <= end_Date)
+                        .ToListAsync();
 
-                return _mapper.Map<List<ReportDTO>>(salesDetail);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return _mapper.Map<List<ReportDTO>>(salesDetail);
         }
     }
 }

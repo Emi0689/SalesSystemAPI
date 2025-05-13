@@ -1,8 +1,7 @@
-﻿using SalesSystem.API.Utilities;
+﻿using SalesSystem.API.Common;
 using SalesSystem.DTO;
 using SalesSystem.BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using SalesSystem.BLL.Services;
 
 namespace SalesSystem.API.Controllers
 {
@@ -17,59 +16,65 @@ namespace SalesSystem.API.Controllers
             _saleService = saleService;
         }
 
+        /// <summary>
+        /// Creates a new sale.
+        /// </summary>
+        /// <param name="saleDTO">Sale data to create.</param>
+        /// <returns>201 Created with the created sale.</returns>
         [HttpPost]
         [Route("Create")]
         public async Task<IActionResult> Create([FromBody] SaleDTO saleDTO)
         {
-            var rsp = new Response<SaleDTO>();
-            try
-            {
-                rsp.Status = true;
-                rsp.Value = await _saleService.Create(saleDTO);
-            }
-            catch (Exception ex)
-            {
-                rsp.Status = false;
-                rsp.ErrorMessage = ex.Message;
-            }
-            return Ok(rsp);
+            var createdSale = await _saleService.Create(saleDTO);
+
+            return Created(
+                uri: Url.Action(nameof(Create), new { id = createdSale.IdSale }),
+                value: new Response<SaleDTO>
+                {
+                    Success = true,
+                    Value = createdSale
+                });
         }
 
+        /// <summary>
+        /// Retrieves sales history based on filters.
+        /// </summary>
+        /// <param name="searchFor">Search term (client or product).</param>
+        /// <param name="saleNumber">Optional sale number filter.</param>
+        /// <param name="startDate">Start date (yyyy-MM-dd).</param>
+        /// <param name="endDate">End date (yyyy-MM-dd).</param>
+        /// <returns>List of sales matching the filters.</returns>
         [HttpGet]
         [Route("History")]
         public async Task<IActionResult> History(string searchFor, string? saleNumber, string? startDate, string? endDate)
         {
-            var rsp = new Response<List<SaleDTO>>();
-            try
+            var history = await _saleService.History(searchFor, saleNumber, startDate, endDate);
+
+            return Ok(new Response<List<SaleDTO>>
             {
-                rsp.Status = true;
-                rsp.Value = await _saleService.History(searchFor, saleNumber, startDate, endDate);
-            }
-            catch (Exception ex)
-            {
-                rsp.Status = false;
-                rsp.ErrorMessage = ex.Message;
-            }
-            return Ok(rsp);
+                Success = true,
+                Value = history
+            });
         }
 
 
+        /// <summary>
+        /// Generates a sales report between two dates.
+        /// </summary>
+        /// <param name="startDate">Start date (yyyy-MM-dd).</param>
+        /// <param name="endDate">End date (yyyy-MM-dd).</param>
+        /// <returns>List of report entries.</returns>
         [HttpGet]
         [Route("Report")]
         public async Task<IActionResult> Report(string startDate, string endDate)
         {
-            var rsp = new Response<List<ReportDTO>>();
-            try
+            var report = await _saleService.Report(startDate, endDate);
+
+            return Ok(new Response<List<ReportDTO>>
             {
-                rsp.Status = true;
-                rsp.Value = await _saleService.Report(startDate, endDate);
-            }
-            catch (Exception ex)
-            {
-                rsp.Status = false;
-                rsp.ErrorMessage = ex.Message;
-            }
-            return Ok(rsp);
+                Success = true,
+                Value = report
+            });
         }
     }
 }

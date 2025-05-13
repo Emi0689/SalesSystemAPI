@@ -1,8 +1,7 @@
-﻿using SalesSystem.API.Utilities;
+﻿using SalesSystem.API.Common;
 using SalesSystem.DTO;
 using SalesSystem.BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using SalesSystem.BLL.Services;
 
 namespace SalesSystem.API.Controllers
 {
@@ -17,22 +16,21 @@ namespace SalesSystem.API.Controllers
             _categoryService = categoryService;
         }
 
+        /// <summary>
+        /// Retrieves all categories.
+        /// </summary>
+        /// <returns>A list of all categories.</returns>
         [HttpGet]
         [Route("GetAll")]
         public async Task<IActionResult> GetAll()
         {
-            var rsp = new Response<List<CategoryDTO>>();
-            try
+            var categories = await _categoryService.GetAllAsync();
+
+            return Ok(new Response<List<CategoryDTO>>
             {
-                rsp.Status = true;
-                rsp.Value = await _categoryService.GetAllAsync();
-            }
-            catch (Exception ex)
-            {
-                rsp.Status = false;
-                rsp.ErrorMessage = ex.Message;
-            }
-            return Ok(rsp);
+                Success = true,
+                Value = categories
+            });
         }
     }
 }

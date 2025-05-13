@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SalesSystem.API.Utilities;
+using SalesSystem.API.Common;
 using SalesSystem.DTO;
 using SalesSystem.BLL.Services.Interfaces;
 using SalesSystem.Utility;
@@ -17,101 +17,100 @@ namespace SalesSystem.API.Controllers
             _userService = userService;
         }
 
+        /// <summary>
+        /// Get all users
+        /// </summary>
+        /// <returns>Return all the users, Ok-status code</returns>
+        //[ServiceFilter(typeof(CustomAuthorizationFilter))]
         [HttpGet]
         [Route("GetAll")]
         public async Task<IActionResult> GetAll()
         {
-            var rsp = new Response<List<UserDTO>>();
-            try
+            var users = await _userService.GetAllAsync();
+            return Ok(new Response<List<UserDTO>>
             {
-                rsp.Status = true;
-                rsp.Value = await _userService.GetAllAsync();
-            }
-            catch (Exception ex)
-            {
-                rsp.Status = false;
-                rsp.ErrorMessage = ex.Message;
-            }
-            return Ok(rsp);
+                Success = true,
+                Value = users
+            });
         }
 
-
+        /// <summary>
+        /// Login user
+        /// </summary>
+        /// <param name="loginDTO"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
-            var rsp = new Response<SessionDTO>();
-            try
+            if (string.IsNullOrEmpty(loginDTO.Email) || string.IsNullOrEmpty(loginDTO.Password))
+                throw new ArgumentNullException("The Email and Password can not be empty.");
+
+            var session = await _userService.ValidateCredentialsAsync(loginDTO.Email, loginDTO.Password);
+
+            return Ok(new Response<SessionDTO>
             {
-                rsp.Status = true;
-                rsp.Value = await _userService.ValidateCredentialsAsync(loginDTO.Email, loginDTO.Password);
-            }
-            catch (Exception ex)
-            {
-                rsp.Status = false;
-                rsp.ErrorMessage = ex.Message;
-            }
-            return Ok(rsp);
+                Success = true,
+                Value = session
+            });
         }
 
+        /// <summary>
+        /// Create user
+        /// </summary>
+        /// <param name="userDTO" <see cref="UserDTO"/>></param>
+        /// <returns>201 Created</returns>
         [HttpPost]
         [Route("Create")]
         public async Task<IActionResult> Create([FromBody] UserDTO userDTO)
         {
-            var rsp = new Response<UserDTO>();
-            try
-            {
-                if (userDTO.IdRol != Constants.rolAdmin)
-                    throw new Exception("Nop!");
+            if (userDTO.IdRol != Constants.rolAdmin)
+                throw new UnauthorizedAccessException("Nop!");
 
-                rsp.Status = true;
-                rsp.Value = await _userService.CreateAsync(userDTO);
-            }
-            catch (Exception ex)
-            {
-                rsp.Status = false;
-                rsp.ErrorMessage = ex.Message;
-            }
-            return Ok(rsp);
+            var createdUser = await _userService.CreateAsync(userDTO);
+
+            return Created(
+                uri: Url.Action(nameof(Create), new { id = createdUser.IdUser }),
+                value: new Response<UserDTO>
+                {
+                    Success = true,
+                    Value = createdUser
+                }
+            );
         }
 
+        /// <summary>
+        /// Update the user
+        /// </summary>
+        /// <param name="userDTO" <see cref="UserDTO"/>></param>
+        /// <returns>204-no content</returns>
         [HttpPut]
         [Route("Update")]
         public async Task<IActionResult> Update([FromBody] UserDTO userDTO)
         {
-            var rsp = new Response<bool>();
-            try
-            {
-                if (userDTO.IdRol != Constants.rolAdmin)
-                    throw new Exception("Nop!");
+            if (userDTO.IdRol != Constants.rolAdmin)
+                throw new UnauthorizedAccessException("Nop!");
 
-                rsp.Status = true;
-                rsp.Value = await _userService.UpdateAsync(userDTO);
-            }
-            catch (Exception ex)
+            var updated = await _userService.UpdateAsync(userDTO);
+
+            return Ok(new Response<bool>
             {
-                rsp.Status = false;
-                rsp.ErrorMessage = ex.Message;
-            }
-            return Ok(rsp);
+                Success = true,
+                Value = updated
+            });
         }
 
         [HttpDelete]
         [Route("Delete/{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var rsp = new Response<bool>();
-            try
+            var deleted = await _userService.DeleteAsync(id);
+
+            return Ok(new Response<bool>
             {
-                rsp.Status = true;
-                rsp.Value = await _userService.DeleteAsync(id);
-            }
-            catch (Exception ex)
-            {
-                rsp.Status = false;
-                rsp.ErrorMessage = ex.Message;
-            }
-            return Ok(rsp);
+                Success = true,
+                Value = deleted
+            });
         }
     }
 }

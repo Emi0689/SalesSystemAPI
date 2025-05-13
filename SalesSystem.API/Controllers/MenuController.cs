@@ -1,8 +1,7 @@
-﻿using SalesSystem.API.Utilities;
+﻿using SalesSystem.API.Common;
 using SalesSystem.DTO;
 using SalesSystem.BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using SalesSystem.BLL.Services;
 
 namespace SalesSystem.API.Controllers
 {
@@ -17,22 +16,22 @@ namespace SalesSystem.API.Controllers
             _menuService = menuService;
         }
 
+        /// <summary>
+        /// Gets the list of menus available for the specified user.
+        /// </summary>
+        /// <param name="userId">User identifier.</param>
+        /// <returns>List of menu items for the user.</returns>
         [HttpGet]
         [Route("GetAll")]
         public async Task<IActionResult> GetAll(int userId)
         {
-            var rsp = new Response<List<MenuDTO>>();
-            try
+            var menus = await _menuService.GetMenu(userId);
+
+            return Ok(new Response<List<MenuDTO>>
             {
-                rsp.Status = true;
-                rsp.Value = await _menuService.GetMenu(userId);
-            }
-            catch (Exception ex)
-            {
-                rsp.Status = false;
-                rsp.ErrorMessage = ex.Message;
-            }
-            return Ok(rsp);
+                Success = true,
+                Value = menus
+            });
         }
     }
 }

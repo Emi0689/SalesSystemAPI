@@ -1,4 +1,4 @@
-﻿using SalesSystem.API.Utilities;
+﻿using SalesSystem.API.Common;
 using SalesSystem.DTO;
 using SalesSystem.BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -16,22 +16,21 @@ namespace SalesSystem.API.Controllers
             _dashboardService = dashboardService;
         }
 
+        /// <summary>
+        /// Retrieves dashboard summary data.
+        /// </summary>
+        /// <returns>Dashboard resume with statistics and key metrics.</returns>
         [HttpGet]
         [Route("Resume")]
         public async Task<IActionResult> Resume()
         {
-            var rsp = new Response<DashboardDTO>();
-            try
+            var dashboardData = await _dashboardService.Resume();
+
+            return Ok(new Response<DashboardDTO>
             {
-                rsp.Status = true;
-                rsp.Value = await _dashboardService.Resume();
-            }
-            catch (Exception ex)
-            {
-                rsp.Status = false;
-                rsp.ErrorMessage = ex.Message;
-            }
-            return Ok(rsp);
-        }
+                Success = true,
+                Value = dashboardData
+            });
+        }   
     }
 }

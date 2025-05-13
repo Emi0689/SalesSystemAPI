@@ -24,29 +24,23 @@ namespace SalesSystem.BLL.Services
         public async Task<DashboardDTO> Resume()
         {
             DashboardDTO vmDashboard = new DashboardDTO();
-            try
+
+            vmDashboard.SalesTotal = await SalesTotalLastWeek();
+            vmDashboard.RevenuesTotal = await RevenuesTotalWeek();
+            vmDashboard.ProductTotal = await ProductTotal();
+
+            List<WeekSaleDTO> weekSaleDTOs = new List<WeekSaleDTO>();
+
+            foreach(KeyValuePair<string, int> item in SaleLastWeek())
             {
-                vmDashboard.SalesTotal = await SalesTotalLastWeek();
-                vmDashboard.RevenuesTotal = await RevenuesTotalWeek();
-                vmDashboard.ProductTotal = await ProductTotal();
-
-                List<WeekSaleDTO> weekSaleDTOs = new List<WeekSaleDTO>();
-
-                foreach(KeyValuePair<string, int> item in SaleLastWeek())
+                weekSaleDTOs.Add(new WeekSaleDTO()
                 {
-                    weekSaleDTOs.Add(new WeekSaleDTO()
-                    {
-                        Date = item.Key,
-                        Total = item.Value,
-                    });
-                }
-                vmDashboard.weekSaleDTOs = weekSaleDTOs;
-                return vmDashboard;
+                    Date = item.Key,
+                    Total = item.Value,
+                });
             }
-            catch (Exception)
-            {
-                throw;
-            }
+            vmDashboard.weekSaleDTOs = weekSaleDTOs;
+            return vmDashboard;
         }
 
         private IQueryable<Sale> SalesReturn(IQueryable<Sale> saleQuery, int days)

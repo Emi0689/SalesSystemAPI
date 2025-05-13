@@ -23,14 +23,7 @@ namespace SalesSystem.BLL.Services
 
         public async Task<List<RolDTO>> GetAll()
         {
-            try
-            {
-                return _mapper.Map<List<RolDTO>>(await _rolGenRepo.GetAllAsync());
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return _mapper.Map<List<RolDTO>>(await _rolGenRepo.GetAllAsync());
         }
     }
 }
