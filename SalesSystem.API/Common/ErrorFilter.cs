@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using SalesSystem.Utility;
-using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace SalesSystem.API.Common
 {
@@ -16,23 +16,36 @@ namespace SalesSystem.API.Common
 
         public void OnException(ExceptionContext context)
         {
-            _logger.LogError(context.Exception, "Handled Exception.");
+            int statusCode;
 
-            var response = new
+            if (context.Exception is AppException appEx)
             {
-                message = context.Exception.Message,
-                exceptionType = context.Exception.GetType().Name
+                statusCode = appEx.StatusCode;
+                _logger.LogError(context.Exception, 
+                    $"Handled Exception: ErrorCode: {appEx.ErrorCode}, " +
+                    $"Title: {appEx.Title}, " +
+                    $"Detail: {appEx.Detail}");
+            }
+            else
+            {
+                statusCode = (int)HttpStatusCode.InternalServerError;
+
+                _logger.LogError(context.Exception,
+                    $"Handled Exception: ErrorCode: UNHANDLED_EXCEPTION, " +
+                    $"Title: Unhandled Exception, " +
+                    $"Detail: default error");
+            }
+
+            var response = new Response<Exception>
+            {
+                Success = false,
+                Value = context.Exception,
+                ErrorMessage = "An unexpected error occurred."
             };
 
             context.Result = new ObjectResult(response)
             {
-                StatusCode = context.Exception switch
-                {
-                    NotFoundException => 404,
-                    ConflictException => 409,
-                    ValidationException => 400,
-                    _ => 500
-                }
+                StatusCode = statusCode
             };
 
             context.ExceptionHandled = true;
