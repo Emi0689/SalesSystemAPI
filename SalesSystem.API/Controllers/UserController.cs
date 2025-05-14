@@ -44,7 +44,7 @@ namespace SalesSystem.API.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
             if (string.IsNullOrEmpty(loginDTO.Email) || string.IsNullOrEmpty(loginDTO.Password))
-                throw new ArgumentNullException("The Email and Password can not be empty.");
+                throw new BadRequestException("The Email and Password can not be empty.");
 
             var session = await _userService.ValidateCredentialsAsync(loginDTO.Email, loginDTO.Password);
 

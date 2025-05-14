@@ -2,6 +2,7 @@
 using SalesSystem.DTO;
 using SalesSystem.BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using SalesSystem.Utility;
 
 namespace SalesSystem.API.Controllers
 {
@@ -25,6 +26,9 @@ namespace SalesSystem.API.Controllers
         [Route("GetAll")]
         public async Task<IActionResult> GetAll(int userId)
         {
+            if(userId == 0)
+                throw new BadRequestException("The UserId can not be null.");
+
             var menus = await _menuService.GetMenu(userId);
 
             return Ok(new Response<List<MenuDTO>>
