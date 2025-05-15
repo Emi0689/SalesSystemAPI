@@ -69,6 +69,8 @@ app.UseCors("Policy");
 ///Middleware
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
+//app.UseExceptionHandler("/error"); // another option if you want to create a Controller-Error
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
