@@ -12,7 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.DependencyInjections(builder.Configuration);
+builder.Services.DependencyInjections(builder.Configuration, builder.Environment.EnvironmentName);
 
 ///////CULTURE INFO////////
 var defaultCulture = new CultureInfo("en-US");
